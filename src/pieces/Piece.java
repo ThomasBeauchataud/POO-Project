@@ -3,7 +3,6 @@ package pieces;
 import common.Position;
 import game.ChessBoard;
 import game.ChessBoardGameInterface;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import view.ImageManager;
 
@@ -123,4 +122,8 @@ public abstract class Piece extends LayoutEntity implements PieceInterface {
         chessBoard.getChildren().remove(this.getImageView());
     }
 
+    @Override
+    public String toString() {
+        return this.getClass().getSimpleName() + "{" + "teamColor=" + teamColor + '}';
+    }
 }
