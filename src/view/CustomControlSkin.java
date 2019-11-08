@@ -1,16 +1,19 @@
 package view;
 
-
-//basic implementation of a Skin
-
-//imports 
 import javafx.scene.control.Skin;
 import javafx.scene.control.SkinBase;
 
-//class definition 
 class CustomControlSkin extends SkinBase<CustomControl> implements Skin<CustomControl> {
-	public CustomControlSkin(CustomControl cc) {
-		//call the super class constructor
+
+	//region Constructor
+
+	/**
+	 * CustomControlSkin Constructor
+	 * @param cc CustomControl
+	 */
+	CustomControlSkin(CustomControl cc) {
 		super(cc);
 	}
+
+	//endregion
 }

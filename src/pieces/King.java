@@ -1,6 +1,9 @@
 package pieces;
 
-import view.ChessBoard;
+import common.Position;
+import game.ChessBoardGameInterface;
+import game.MovementRules;
+import game.ChessBoard;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,17 +15,17 @@ public class King extends Piece {
 	}
 
 	@Override
-	public List<Position> getPossibilities(ChessBoard chessBoard) {
+	public List<Position> getPossibilities(ChessBoardGameInterface chessBoard) {
 		int x;
 		int y;
 		List<Position> positions = new ArrayList<>();
 		for (y = this.getPosition().getY() - 1; y <= this.getPosition().getY() + 1; y++) {
 			for (x = this.getPosition().getX() - 1; x <= this.getPosition().getX() + 1; x++) {
-				if(y >= 0 && y < chessBoard.getBoardHeight() && x >= 0 && x < chessBoard.getBoardWidth() && chessBoard.getBoardPosition(x, y) != this.getTeamColor()) {
-					if (!chessBoard.checkState) {
+				if(y >= 0 && y < ChessBoard.boardSize && x >= 0 && x < ChessBoard.boardSize && chessBoard.getBoardPosition(x, y) != this.getTeamColor()) {
+					if (!chessBoard.getGameManagement().isCheckState()) {
 						this.canCastle(chessBoard);
 					}
-					if (!gameLogic.isCheck(chessBoard, x, y, this.getTeamColor(), true)) {
+					if (!MovementRules.isCheck(chessBoard, x, y, this.getTeamColor(), true)) {
 						positions.add(new Position(x, y));
 					}
 				}
@@ -31,8 +34,7 @@ public class King extends Piece {
 		return positions;
 	}
 
-	@Override
-	public Castle canCastle(ChessBoard chessBoard){
+	public Castle canCastle(ChessBoardGameInterface chessBoard){
 		Castle canCastle = null;
 		if(this.getTeamColor() == TeamColor.Black && this.isFirstTime() && chessBoard.getBoardPosition(5, 0) == null && chessBoard.getBoardPosition(6, 0) == null && chessBoard.getPiece(7, 0) != null && chessBoard.getPiece(7, 0).isFirstTime()){
 			canCastle = Castle.ShortBlack;

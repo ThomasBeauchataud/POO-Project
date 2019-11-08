@@ -8,7 +8,7 @@ import java.io.File;
 public class ImageManager {
 
     public static Image loadImage(Piece piece) {
-        String filePath = System.getProperty("user.dir") + "/src/main/resources/" + piece.getTeamColor().name() + "_"
+        String filePath = System.getProperty("user.dir") + "/resources/" + piece.getTeamColor().name() + "_"
                 + piece.getClass().getSimpleName( )+ ".png";
         return new Image(new File(filePath).toURI().toString());
     }
