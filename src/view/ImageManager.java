@@ -7,7 +7,11 @@ import java.io.File;
 
 public class ImageManager {
 
-    //TODO Comment
+    /**
+     * Return an image associated to the piece
+     * @param piece Piece
+     * @return Image
+     */
     public static Image loadImage(Piece piece) {
         String filePath = System.getProperty("user.dir") + "/resources/" + piece.getTeamColor().name() + "_"
                 + piece.getClass().getSimpleName( )+ ".png";

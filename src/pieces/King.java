@@ -2,6 +2,7 @@ package pieces;
 
 import common.Position;
 import game.ChessBoardGameInterface;
+import game.ChessBoardPieceInterface;
 import game.MovementRules;
 import game.ChessBoard;
 
@@ -35,7 +36,7 @@ public class King extends Piece {
 		return positions;
 	}
 
-	public Castle canCastle(ChessBoardGameInterface chessBoard){
+	public Castle canCastle(ChessBoardPieceInterface chessBoard){
 		Castle canCastle = null;
 		if(this.getTeamColor() == TeamColor.Black && this.isFirstTime() && chessBoard.getBoardPosition(5, 0) == null && chessBoard.getBoardPosition(6, 0) == null && chessBoard.getPiece(7, 0) != null && chessBoard.getPiece(7, 0).isFirstTime()){
 			canCastle = Castle.ShortBlack;

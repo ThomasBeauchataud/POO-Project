@@ -1,5 +1,6 @@
 package view;
 
+import game.GameLogic;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.VPos;
@@ -70,6 +71,7 @@ public class StatusBar extends HBox implements StatusBarInterface {
 		} else {
 			whitePlayerAlert.setText("White Player is in checkmate");
 		}
+		alertWinner(GameLogic.getEnemyTeamColor(teamColor));
 	}
 
 	@Override
@@ -91,11 +93,6 @@ public class StatusBar extends HBox implements StatusBarInterface {
 	}
 
 	@Override
-	public void alertWinner(TeamColor teamColor) {
-		winner.setText(teamColor.name() + " Player won !");
-	}
-
-	@Override
 	public void alertStalemate() {
 		winner.setText("Stalemate !");
 	}
@@ -107,6 +104,7 @@ public class StatusBar extends HBox implements StatusBarInterface {
 		} else {
 			blackPlayerAlert.setText("Black Player run out of time");
 		}
+		alertWinner(GameLogic.getEnemyTeamColor(teamColor));
 	}
 
 	@Override
@@ -119,13 +117,11 @@ public class StatusBar extends HBox implements StatusBarInterface {
 	}
 
 	@Override
-	public void resetTimer() {
+	public void reset() {
+		whitePlayerAlert.setText("White Player turn");
+		blackPlayerAlert.setText("");
 		whitePlayerTimer.setText("White timer: 15:00");
 		blackPlayerTimer.setText("Black timer: 15:00");
-	}
-
-	@Override
-	public void removeWinner() {
 		winner.setText("");
 	}
 
@@ -143,6 +139,10 @@ public class StatusBar extends HBox implements StatusBarInterface {
 		super.resize(width, height); 
 		setWidth(width);
 		setHeight(height);
+	}
+
+	private void alertWinner(TeamColor teamColor) {
+		winner.setText(teamColor.name() + " Player won !");
 	}
 
 }

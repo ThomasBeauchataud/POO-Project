@@ -1,8 +1,8 @@
 package pieces;
 
 import common.Position;
-import game.ChessBoard;
 import game.ChessBoardGameInterface;
+import game.ChessBoardPieceInterface;
 import javafx.scene.image.ImageView;
 import view.ImageManager;
 
@@ -64,7 +64,7 @@ public abstract class Piece extends LayoutEntity implements PieceInterface {
     public abstract List<Position> getPossibilities(ChessBoardGameInterface chessBoard);
 
     @Override
-    public void move(ChessBoard chessBoard, int x, int y) {
+    public void move(ChessBoardPieceInterface chessBoard, int x, int y) {
         chessBoard.setPiece(this.position.getX(), this.position.getY(), null);
         if (!chessBoard.getGameManagement().isCheckState() && this instanceof King) {
             if (((King)this).canCastle(chessBoard) == Castle.ShortBlack) {
@@ -109,8 +109,8 @@ public abstract class Piece extends LayoutEntity implements PieceInterface {
     }
 
     @Override
-    public void capture(ChessBoard chessBoard) {
-        chessBoard.getChildren().remove(this.getImageView());
+    public void capture(ChessBoardPieceInterface chessBoard) {
+        chessBoard.removePieceView(this);
     }
 
     @Override

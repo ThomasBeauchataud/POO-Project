@@ -16,8 +16,21 @@ import java.util.List;
  * Game Logic Management
  */
 @Aspect
-@SuppressWarnings({"WeakerAccess","Duplicates"})
+@SuppressWarnings("Duplicates")
 public class GameLogic {
+
+    /**
+     * After the reset of the game, reset the timer and alert messages
+     * @param joinPoint JoinPoint
+     */
+    @After("execution(public void game.ChessBoard.resetGame())")
+    public void afterResetGame(JoinPoint joinPoint) {
+        ChessBoard chessBoard = (ChessBoard) joinPoint.getTarget();
+        chessBoard.getGameManagement().resetGame();
+        chessBoard.getStatusBar().reset();
+        chessBoard.getTimer().reset();
+
+    }
 
     /**
      * Check if a Piece can move or not before searching movements possibilities
@@ -41,7 +54,7 @@ public class GameLogic {
      * Check after a Piece movement if one player is in a check situation or if one player has won
      * @param joinPoint JoinPoint
      */
-    @After("execution(public void game.ChessBoard.movePiece(double, double))")
+    @After("execution(private void game.ChessBoard.movePiece(double, double))")
     public void afterPieceMovement(JoinPoint joinPoint) {
         ChessBoard chessBoard = (ChessBoard) joinPoint.getTarget();
         //Change the player
@@ -62,7 +75,6 @@ public class GameLogic {
             if (isCheckmate(chessBoard, chessBoard.getKing(player).getPosition(), player)) {
                 chessBoard.getGameManagement().setCheckmate(true);
                 chessBoard.getStatusBar().alertCheckmate(player);
-                chessBoard.getStatusBar().alertWinner(getEnemyTeamColor(player));
             }
             else {
                 chessBoard.getStatusBar().alertCheck(player);
@@ -75,7 +87,6 @@ public class GameLogic {
         else {
             chessBoard.getStatusBar().alertTurn(player);
         }
-        chessBoard.getTimer().setPlayerTurn(player);
     }
 
     /**
@@ -613,7 +624,11 @@ public class GameLogic {
         return count;
     }
 
-    //TODO Comment
+    /**
+     * Return the opposite TeamColor
+     * @param teamColor TeamColor
+     * @return TeamColor
+     */
     public static TeamColor getEnemyTeamColor(TeamColor teamColor) {
         if (teamColor == TeamColor.White) {
             return TeamColor.Black;

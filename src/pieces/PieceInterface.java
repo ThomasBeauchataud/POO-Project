@@ -3,6 +3,7 @@ package pieces;
 import common.Position;
 import game.ChessBoard;
 import game.ChessBoardGameInterface;
+import game.ChessBoardPieceInterface;
 
 import java.util.List;
 
@@ -25,11 +26,11 @@ public interface PieceInterface extends LayoutEntityInterface {
 
     /**
      * Move the Piece to a Position
-     * @param chessBoard ChessBoard
+     * @param chessBoard ChessBoardPieceInterface
      * @param x int
      * @param y int
      */
-    void move(ChessBoard chessBoard, int x, int y);
+    void move(ChessBoardPieceInterface chessBoard, int x, int y);
 
     /**
      * Return if the piece has already moved or not
@@ -51,9 +52,9 @@ public interface PieceInterface extends LayoutEntityInterface {
 
     /**
      * Capture a Piece a the same position of the ChessBoard
-     * @param chessBoard ChessBoard
+     * @param chessBoard ChessBoardPieceInterface
      */
-    void capture(ChessBoard chessBoard);
+    void capture(ChessBoardPieceInterface chessBoard);
 
     /**
      * Return the list of possibles position of a Piece

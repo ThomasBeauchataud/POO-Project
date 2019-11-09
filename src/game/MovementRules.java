@@ -3,6 +3,8 @@ package game;
 import common.Position;
 import pieces.*;
 
+import static game.GameLogic.getEnemyTeamColor;
+
 //TODO Optimize all this methods
 public class MovementRules {
 
@@ -476,20 +478,5 @@ public class MovementRules {
 					return (true);
 		return (false);
 	}
-
-	/**
-	 * Return the opposite TeamColor
-	 * @param teamColor TeamColor
-	 * @return TeamColor
-	 */
-	private static TeamColor getEnemyTeamColor(TeamColor teamColor) {
-		if (teamColor == TeamColor.White) {
-			return TeamColor.Black;
-		}
-		else {
-			return TeamColor.White;
-		}
-	}
-
 
 }

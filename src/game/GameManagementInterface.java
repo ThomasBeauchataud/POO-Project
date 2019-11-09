@@ -8,14 +8,7 @@ import java.util.List;
 /**
  * Manage Game situations
  */
-@SuppressWarnings("BooleanMethodIsAlwaysInverted")
-public interface GameManagementInterface {
-
-    /**
-     * Return true if there is a Checkmate
-     * @return boolean
-     */
-    boolean isCheckmate();
+public interface GameManagementInterface extends GameManagementTimerInterface {
 
     /**
      * Set the Checkmate situation
@@ -34,12 +27,6 @@ public interface GameManagementInterface {
      * @param checkState boolean
      */
     void setCheckState(boolean checkState);
-
-    /**
-     * Return if the actual player can move
-     * @return boolean
-     */
-    boolean isStalemate();
 
     /**
      * Set if the actual player can move
@@ -70,12 +57,6 @@ public interface GameManagementInterface {
      * @param selectedPiece PieceInterface
      */
     void setSelectedPiece(PieceInterface selectedPiece);
-
-    /**
-     * Get the current player TeamColor
-     * @return TeamColor
-     */
-    TeamColor getCurrentPlayer();
 
     /**
      * Set the current player TeamColor

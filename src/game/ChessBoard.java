@@ -1,6 +1,5 @@
 package game;
 
-
 import common.Position;
 import pieces.*;
 import javafx.animation.Timeline;
@@ -13,29 +12,28 @@ import javafx.scene.shape.Rectangle;
 import view.StatusBar;
 import view.StatusBarInterface;
 import view.Window;
+import view.WindowInterface;
 
 import java.util.List;
 import java.util.Optional;
 
-@SuppressWarnings("WeakerAccess")
+@SuppressWarnings({"WeakerAccess", "OptionalGetWithoutIsPresent"})
 public class ChessBoard extends Pane implements ChessBoardGameInterface, ChessBoardViewInterface {
 
 	public static int boardSize = 8;
 
 	private GameManagementInterface gameManagement = new GameManagement();
 	private PieceInterface[][] pieces;
-	private Window[][] windows;
+	private WindowInterface[][] windows;
 	private StatusBarInterface statusBar;
 	private Rectangle background;
 	private double cell_width;
 	private double cell_height;
-	private Timer timer;
+	private TimerInterface timer;
 
 	public ChessBoard(StatusBar newStatusBar) {
 		statusBar = newStatusBar;
-		statusBar.alertTurn(TeamColor.White);
-		statusBar.removeAlert(TeamColor.Black);
-		statusBar.resetTimer();
+		statusBar.reset();
 		background = new Rectangle();
 		background.setFill(Color.WHITE);
 		getChildren().add(background);
@@ -52,17 +50,16 @@ public class ChessBoard extends Pane implements ChessBoardGameInterface, ChessBo
 					windows[i][j] = new Window(1);
 					isBlack = true; 
 				}
-				getChildren().add(windows[i][j]);
+				getChildren().add((Window)windows[i][j]);
 				pieces[i][j] = null;
 			}
 		}
 		gameManagement.setCurrentPlayer(TeamColor.White);
 		initPiece();
-		Timer timer = new Timer(this);
-		timer.timeline.setCycleCount(Timeline.INDEFINITE);
-		timer.timeline.play();
-		this.timer = timer;
-		this.timer.setPlayerTurn(gameManagement.getCurrentPlayer());
+		timer = new Timer(gameManagement, statusBar);
+
+		timer.getTimeline().setCycleCount(Timeline.INDEFINITE);
+		timer.getTimeline().play();
 	}
 
 	@Override
@@ -75,7 +72,7 @@ public class ChessBoard extends Pane implements ChessBoardGameInterface, ChessBo
 		return (statusBar);
 	}
 
-	public Timer getTimer() {
+	public TimerInterface getTimer() {
 		return timer;
 	}
 
@@ -112,7 +109,6 @@ public class ChessBoard extends Pane implements ChessBoardGameInterface, ChessBo
 
 	@Override
 	public void resetGame() {
-		timer.setPlayerTurn(null);
 		for(PieceInterface[] pieces : this.pieces) {
 			for(PieceInterface piece : pieces) {
 				if(piece != null) {
@@ -121,14 +117,6 @@ public class ChessBoard extends Pane implements ChessBoardGameInterface, ChessBo
 			}
 		}
 		this.initPiece();
-		statusBar.alertTurn(TeamColor.White);
-		statusBar.removeAlert(TeamColor.Black);
-		statusBar.removeWinner();
-		timer.setTimeOver(false);
-		gameManagement.resetGame();
-		timer.setPlayerTurn(gameManagement.getCurrentPlayer());
-		timer.timeline.play();
-		timer.reset();
 		unhighlightWindow();
 	}
 	
@@ -157,13 +145,13 @@ public class ChessBoard extends Pane implements ChessBoardGameInterface, ChessBo
 		}
 	}
 
-	public void movePiece(final double x, final double y){
-		int indexX = (int) (x/ cell_width);
-		int indexY = (int) (y/ cell_height);
-		gameManagement.getSelectedPiece().move(this, indexX, indexY);
+	@Override
+	public void removePieceView(PieceInterface piece) {
+		getChildren().remove(piece.getImageView());
 	}
-	
-	public void createPromotePiece(Piece piece) {
+
+	@Override
+	public void createPromotePiece(PieceInterface piece) {
 		Piece promotedPiece;
 		Alert alert = new Alert(AlertType.CONFIRMATION);
 		alert.setTitle("Promote a piece");
@@ -201,18 +189,12 @@ public class ChessBoard extends Pane implements ChessBoardGameInterface, ChessBo
 		}
 	}
 
+	@Override
 	public void colorSquare(int x, int y, boolean selectedPiece) {
 		if (selectedPiece)
 			windows[x][y].highlightWindow(Color.ORANGE);
 		else
 			windows[x][y].highlightWindow(Color.GREEN);
-	}
-
-	@Override
-	public void timerOver(TeamColor playerOutOfTime) {
-		timer.timeline.stop();
-		statusBar.alertOutOfTime(TeamColor.White);
-		statusBar.alertWinner(GameLogic.getEnemyTeamColor(playerOutOfTime));
 	}
 
 	@Override
@@ -227,9 +209,16 @@ public class ChessBoard extends Pane implements ChessBoardGameInterface, ChessBo
 	public PieceInterface getPiece(int x, int y) {
 		return (pieces[x][y]);
 	}
-	
+
+	@Override
 	public void setPiece(int x, int y, PieceInterface piece) {
 		this.pieces[x][y] = piece;
+	}
+
+	private void movePiece(final double x, final double y){
+		int indexX = (int) (x/ cell_width);
+		int indexY = (int) (y/ cell_height);
+		gameManagement.getSelectedPiece().move(this, indexX, indexY);
 	}
 
     private void unhighlightWindow() {

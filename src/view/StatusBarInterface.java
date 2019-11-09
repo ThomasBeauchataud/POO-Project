@@ -1,29 +1,44 @@
 package view;
 
-import javafx.scene.control.Label;
 import pieces.TeamColor;
 
-//TODO Comment
-public interface StatusBarInterface {
+/**
+ * Handle the status bar management
+ */
+public interface StatusBarInterface extends StatusBarTimerInterface {
 
+    /**
+     * Modify the alert of a player for a checkmate situation and create the winner message
+     * @param teamColor TeamColor
+     */
     void alertCheckmate(TeamColor teamColor);
 
+    /**
+     * Modify the alert of a player for a check situation
+     * @param teamColor TeamColor
+     */
     void alertCheck(TeamColor teamColor);
 
+    /**
+     * Modify the alert of a player for his turn to play
+     * @param teamColor TeamColor
+     */
     void alertTurn(TeamColor teamColor);
 
-    void alertWinner(TeamColor teamColor);
-
+    /**
+     * Modify the winner alert for a stalemate situation
+     */
     void alertStalemate();
 
-    void alertOutOfTime(TeamColor teamColor);
-
+    /**
+     * Modify the alert of a player by removing it
+     * @param teamColor TeamColor
+     */
     void removeAlert(TeamColor teamColor);
 
-    void resetTimer();
-
-    void removeWinner();
-
-    Label getPlayerTimer(TeamColor teamColor);
+    /**
+     * Reset the status bar for a new game
+     */
+    void reset();
     
 }

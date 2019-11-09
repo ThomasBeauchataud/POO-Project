@@ -12,10 +12,6 @@ public class Window extends Group implements WindowInterface {
 	private Translate pos;
 	private boolean highlighted;
 
-	/**
-	 * Make a new Rectangle and Translate, add the Translate to the Rectangle, add the Rectangle to the Group
-	 * @param i int
-	 */
 	public Window(int i) {
 		pos = new Translate();
 		rectangle = new Rectangle();
@@ -30,10 +26,12 @@ public class Window extends Group implements WindowInterface {
 		getChildren().add(rectangle);
 	}
 
+	@Override
 	public Rectangle getRectangle() {
 		return rectangle;
 	}
 
+	@Override
 	public boolean isHighlighted() {
 		return highlighted;
 	}
@@ -52,6 +50,7 @@ public class Window extends Group implements WindowInterface {
 		pos.setY(y);
 	}
 
+	@Override
 	public void highlightWindow(Color color) {
 		rectangle.setStrokeType(StrokeType.INSIDE);
 		rectangle.setStrokeWidth(4);
@@ -61,8 +60,10 @@ public class Window extends Group implements WindowInterface {
 		}
 	}
 
+	@Override
 	public void unhighlight() {
 		rectangle.setStroke(null);
 		highlighted = false;
 	}
+
 }

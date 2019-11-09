@@ -7,7 +7,7 @@ import view.StatusBarInterface;
 /**
  * Manage the ChessBoard Game
  */
-public interface ChessBoardGameInterface {
+public interface ChessBoardGameInterface extends ChessBoardPieceInterface {
 
     /**
      * Return the TeamColor of the Piece at a specific position
@@ -27,9 +27,6 @@ public interface ChessBoardGameInterface {
      */
     PieceInterface getPiece(int x, int y);
 
-    //TODO Remove this
-    void colorSquare(int x, int y, boolean bool);
-
     /**
      * Return the King of a player identified by his TeamColor
      * @param teamColor TeamColor
@@ -48,11 +45,5 @@ public interface ChessBoardGameInterface {
      * @return StatusBarInterface
      */
     StatusBarInterface getStatusBar();
-
-    /**
-     * Set the time over status for a player
-     * @param playerOutOfTime TeamColor
-     */
-    void timerOver(TeamColor playerOutOfTime);
 
 }
