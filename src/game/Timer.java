@@ -39,6 +39,11 @@ public class Timer {
 		this.timeOver = timeOver;
 	}
 
+	public void reset() {
+		whiteTimer = ConfigReader.getInt("time");
+		blackTimer = ConfigReader.getInt("time");
+	}
+
 	public Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(1), new EventHandler<ActionEvent>() {
 		@Override
 		public void handle(ActionEvent event) {

@@ -111,24 +111,16 @@ public class ChessBoard extends Pane implements ChessBoardGameInterface, ChessBo
 	}
 
 	@Override
-	//TODO optimise this
 	public void resetGame() {
 		timer.setPlayerTurn(null);
-		for (int i = 0; i < 8; i++) {
-			for (int j = 0; j < 8; j++) {
-				if (pieces[i][j] != null)
-					getChildren().remove(pieces[i][j].getImageView());
-				getChildren().remove(pieces[i][j]);
-				pieces[i][j] = null;
+		for(PieceInterface[] pieces : this.pieces) {
+			for(PieceInterface piece : pieces) {
+				if(piece != null) {
+					getChildren().remove(piece.getImageView());
+				}
 			}
 		}
-		for(int i = 0; i < 8; i++){
-            assert pieces[i][0] != null;
-            pieces[i][0].resetPiece();
-			pieces[i][1].resetPiece();
-			pieces[i][6].resetPiece();
-			pieces[i][7].resetPiece();
-		}
+		this.initPiece();
 		statusBar.whitePlayerAlert.setText("White Player turn");
 		statusBar.blackPlayerAlert.setText("");
 		statusBar.whitePlayerTimer.setText("White timer: 15:00");
@@ -138,6 +130,7 @@ public class ChessBoard extends Pane implements ChessBoardGameInterface, ChessBo
 		gameManagement.resetGame();
 		timer.setPlayerTurn(gameManagement.getCurrentPlayer());
 		timer.timeline.play();
+		timer.reset();
 		unhighlightWindow();
 	}
 	
@@ -216,8 +209,6 @@ public class ChessBoard extends Pane implements ChessBoardGameInterface, ChessBo
 		else
 			windows[x][y].highlightWindow(Color.GREEN);
 	}
-	
-
 
 	@Override
 	public void timerOver(TeamColor playerOutOfTime) {
