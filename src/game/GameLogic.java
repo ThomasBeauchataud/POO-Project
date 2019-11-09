@@ -607,23 +607,29 @@ public class GameLogic {
 
     /**
      * Return true is where in a stalemate situation
-     * TODO Reform implementation
      * @param chessBoard ChessBoardGameInterface
      * @return boolean
      */
     private boolean isLimitPieceStalemate(ChessBoardGameInterface chessBoard) {
-        if (piecesCount(chessBoard, Queen.class, TeamColor.White) != 0 || piecesCount(chessBoard, Queen.class, TeamColor.Black) != 0)
-            return (false);
-        else if (piecesCount(chessBoard, Rook.class, TeamColor.White) != 0 || piecesCount(chessBoard, Rook.class, TeamColor.Black) != 0)
-            return (false);
-        else if (piecesCount(chessBoard, Knight.class, TeamColor.White) > 1 || piecesCount(chessBoard, Knight.class, TeamColor.Black) > 1)
-            return (false);
+        if (piecesCount(chessBoard, Queen.class, TeamColor.White) != 0 || piecesCount(chessBoard, Queen.class, TeamColor.Black) != 0) {
+            return false;
+        }
+        else if (piecesCount(chessBoard, Rook.class, TeamColor.White) != 0 || piecesCount(chessBoard, Rook.class, TeamColor.Black) != 0) {
+            return false;
+        }
+        else if (piecesCount(chessBoard, Knight.class, TeamColor.White) > 1 || piecesCount(chessBoard, Knight.class, TeamColor.Black) > 1) {
+            return false;
+        }
         else if (((piecesCount(chessBoard, Bishop.class, TeamColor.White) != 0) && piecesCount(chessBoard, Knight.class, TeamColor.White) != 0) ||
-                ((piecesCount(chessBoard, Bishop.class, TeamColor.Black) != 0) && piecesCount(chessBoard, Knight.class, TeamColor.Black) != 0))
-            return (false);
-        else if ((piecesCount(chessBoard, Bishop.class, TeamColor.White) == 2) || (piecesCount(chessBoard, Bishop.class, TeamColor.Black) == 2))
-            return (false);
-        else return piecesCount(chessBoard, Pawn.class, TeamColor.White) <= 1 && piecesCount(chessBoard, Pawn.class, TeamColor.White) <= 1;
+                ((piecesCount(chessBoard, Bishop.class, TeamColor.Black) != 0) && piecesCount(chessBoard, Knight.class, TeamColor.Black) != 0)) {
+            return false;
+        }
+        else if ((piecesCount(chessBoard, Bishop.class, TeamColor.White) == 2) || (piecesCount(chessBoard, Bishop.class, TeamColor.Black) == 2)) {
+            return false;
+        }
+        else {
+            return piecesCount(chessBoard, Pawn.class, TeamColor.White) <= 1 && piecesCount(chessBoard, Pawn.class, TeamColor.White) <= 1;
+        }
     }
 
     /**
