@@ -8,6 +8,7 @@ import game.ChessBoard;
 import java.util.ArrayList;
 import java.util.List;
 
+@SuppressWarnings("WeakerAccess")
 public class King extends Piece {
 	
 	public King(TeamColor teamColor, Position position) {

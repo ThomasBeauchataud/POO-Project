@@ -3,6 +3,7 @@ package view;
 import javafx.scene.control.Label;
 import pieces.TeamColor;
 
+//TODO Comment
 public interface StatusBarInterface {
 
     void alertCheckmate(TeamColor teamColor);

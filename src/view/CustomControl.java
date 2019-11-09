@@ -11,10 +11,6 @@ public class CustomControl extends Control {
 	private StatusBar statusBar;
 	private int statusBarSize = 100;
 
-	/**
-	 * CustomControl Constructor
-	 * Complex mouse interactions and key interactions
-	 */
 	public CustomControl() {
 		setSkin(new CustomControlSkin(this));
 		statusBar = new StatusBar();

@@ -16,7 +16,7 @@ import java.util.List;
  * Game Logic Management
  */
 @Aspect
-@SuppressWarnings("WeakerAccess")
+@SuppressWarnings({"WeakerAccess","Duplicates"})
 public class GameLogic {
 
     /**
@@ -59,7 +59,7 @@ public class GameLogic {
             chessBoard.getGameManagement().setCheckState(true);
             chessBoard.getGameManagement().getCheckPieces().addAll(findAllCheckPieces(chessBoard, chessBoard.getKing(player).getPosition(), player));
             //If the player is in a checkmate situation
-            if (isCheckmate(chessBoard, chessBoard.getKing(player).getPosition().getX(), chessBoard.getKing(player).getPosition().getY(), player)) {
+            if (isCheckmate(chessBoard, chessBoard.getKing(player).getPosition(), player)) {
                 chessBoard.getGameManagement().setCheckmate(true);
                 chessBoard.getStatusBar().alertCheckmate(player);
                 chessBoard.getStatusBar().alertWinner(getEnemyTeamColor(player));
@@ -149,8 +149,8 @@ public class GameLogic {
     /**
      * Return this list of all pieces which create a check situation
      * @param chessBoard ChessBoard
-     * @param position Position
-     * @param teamColor TeamColor
+     * @param position Position, the Kink position
+     * @param teamColor TeamColor, the player
      * @return PieceInterface[]
      */
     private List<PieceInterface> findAllCheckPieces(ChessBoardGameInterface chessBoard, Position position, TeamColor teamColor) {
@@ -315,12 +315,13 @@ public class GameLogic {
     /**
      * Return true if the player is in a Checkmate situation
      * @param chessBoard ChessBoard
-     * @param xPos int
-     * @param yPos int
-     * @param teamColor TeamColor
+     * @param position Position, the King Position
+     * @param teamColor TeamColor, the player
      * @return boolean
      */
-    private boolean isCheckmate(ChessBoardGameInterface chessBoard, int xPos, int yPos, TeamColor teamColor) {
+    private boolean isCheckmate(ChessBoardGameInterface chessBoard, Position position, TeamColor teamColor) {
+        int xPos = position.getX();
+        int yPos = position.getY();
         boolean checkmate = true;
         for (int y = yPos - 1; y <= yPos + 1; y++) {
             for (int x = xPos - 1; x <= xPos + 1; x++) {
@@ -336,7 +337,7 @@ public class GameLogic {
         if (chessBoard.getGameManagement().getCheckPieces().size() < 2) {
             PieceInterface checkPiece = chessBoard.getGameManagement().getCheckPieces().get(0);
             canCapture(chessBoard, checkPiece);
-            canProtect(chessBoard, xPos, yPos, teamColor, checkPiece);
+            canProtect(chessBoard, position, checkPiece);
             if (!chessBoard.getGameManagement().getSaviorPieces().isEmpty()) {
                 for(Iterator<PieceInterface> piece = chessBoard.getGameManagement().getSaviorPieces().iterator(); piece.hasNext(); ) {
                     PieceInterface item = piece.next();
@@ -354,50 +355,72 @@ public class GameLogic {
         return checkmate;
     }
 
-    private void canProtect(ChessBoardGameInterface chessboard, int xPos, int yPos, TeamColor teamColor, PieceInterface checkPiece)
-    {
-        if (checkPiece instanceof Knight || checkPiece instanceof Pawn)
-            return;
-        // Vertical up threat
-        if (xPos == checkPiece.getPosition().getX() && yPos > checkPiece.getPosition().getY())
-            for (int y = checkPiece.getPosition().getY() + 1; y < yPos; y++)
-                findAllSaviorPieces(chessboard, checkPiece.getPosition().getX(), y, checkPiece.getTeamColor(), true);
-        // Vertical down threat
-        if (xPos == checkPiece.getPosition().getX() && yPos < checkPiece.getPosition().getY())
-            for (int y = checkPiece.getPosition().getY() - 1; y > yPos; y--)
-                findAllSaviorPieces(chessboard, checkPiece.getPosition().getX(), y, checkPiece.getTeamColor(), true);
-        // Horizontal left threat
-        if (xPos > checkPiece.getPosition().getX() && yPos == checkPiece.getPosition().getY())
-            for (int x = checkPiece.getPosition().getX() + 1; x < xPos; x++)
-                findAllSaviorPieces(chessboard, x, checkPiece.getPosition().getY(), checkPiece.getTeamColor(), true);
-        // Horizontal right threat
-        if (xPos < checkPiece.getPosition().getX() && yPos == checkPiece.getPosition().getY())
-            for (int x = checkPiece.getPosition().getX() - 1; x > xPos; x--)
-                findAllSaviorPieces(chessboard, x, checkPiece.getPosition().getY(), checkPiece.getTeamColor(), true);
-        // Diagonal 1 \ up threat
+    /**
+     * Find all piece that can protected from a check situation from the piece checkPiece and store them in the GameManagement
+     * @param chessboard ChessBoard
+     * @param position Position, the King position
+     * @param checkPiece PieceInterface
+     */
+    private void canProtect(ChessBoardGameInterface chessboard, Position position, PieceInterface checkPiece) {
+        List<PieceInterface> saviorPieces =  new ArrayList<>();
+        //Handle Vertical Up threat
+        if (position.getX() == checkPiece.getPosition().getX() && position.getY() > checkPiece.getPosition().getY()) {
+            for (int y = checkPiece.getPosition().getY() + 1; y < position.getY(); y++) {
+                saviorPieces.addAll(findAllSaviorPieces(chessboard, checkPiece.getPosition().getX(), y, checkPiece.getTeamColor(), true));
+            }
+        }
+        //Handle Vertical Down threat
+        if (position.getX() == checkPiece.getPosition().getX() && position.getY() < checkPiece.getPosition().getY()) {
+            for (int y = checkPiece.getPosition().getY() - 1; y > position.getY(); y--) {
+                saviorPieces.addAll(findAllSaviorPieces(chessboard, checkPiece.getPosition().getX(), y, checkPiece.getTeamColor(), true));
+            }
+        }
+        //Handle Horizontal Left threat
+        if (position.getX() > checkPiece.getPosition().getX() && position.getY() == checkPiece.getPosition().getY()) {
+            for (int x = checkPiece.getPosition().getX() + 1; x < position.getX(); x++) {
+                saviorPieces.addAll(findAllSaviorPieces(chessboard, x, checkPiece.getPosition().getY(), checkPiece.getTeamColor(), true));
+            }
+        }
+        //Handle Horizontal Right threat
+        if (position.getX() < checkPiece.getPosition().getX() && position.getY() == checkPiece.getPosition().getY()) {
+            for (int x = checkPiece.getPosition().getX() - 1; x > position.getX(); x--) {
+                saviorPieces.addAll(findAllSaviorPieces(chessboard, x, checkPiece.getPosition().getY(), checkPiece.getTeamColor(), true));
+            }
+        }
+        //Handle Diagonal Up Left threat
         int y = checkPiece.getPosition().getY() + 1;
-        if (xPos > checkPiece.getPosition().getX() && yPos > checkPiece.getPosition().getY())
-            for (int x = checkPiece.getPosition().getX() + 1; x < xPos && y < yPos; x++, y++)
-                findAllSaviorPieces(chessboard, x, y, checkPiece.getTeamColor(), true);
-        // Diagonal 1 \ down threat
+        if (position.getX() > checkPiece.getPosition().getX() && position.getY() > checkPiece.getPosition().getY()) {
+            for (int x = checkPiece.getPosition().getX() + 1; x < position.getX() && y < position.getY(); x++, y++) {
+                saviorPieces.addAll(findAllSaviorPieces(chessboard, x, y, checkPiece.getTeamColor(), true));
+            }
+        }
+        //Handle Diagonal Down Right threat
         y = checkPiece.getPosition().getY() - 1;
-        if (xPos < checkPiece.getPosition().getX() && yPos < checkPiece.getPosition().getY())
-            for (int x = checkPiece.getPosition().getX() - 1; x > xPos && y > yPos; x--, y--)
-                findAllSaviorPieces(chessboard, x, y, checkPiece.getTeamColor(), true);
-        // Diagonal 2 / up threat
+        if (position.getX() < checkPiece.getPosition().getX() && position.getY() < checkPiece.getPosition().getY()) {
+            for (int x = checkPiece.getPosition().getX() - 1; x > position.getX() && y > position.getY(); x--, y--) {
+                saviorPieces.addAll(findAllSaviorPieces(chessboard, x, y, checkPiece.getTeamColor(), true));
+            }
+        }
+        //Handle Diagonal Up Right threat
         y = checkPiece.getPosition().getY() + 1;
-        if (xPos < checkPiece.getPosition().getX() && yPos > checkPiece.getPosition().getY())
-            for (int x = checkPiece.getPosition().getX() - 1; x > xPos && y < yPos; x--, y++)
-                findAllSaviorPieces(chessboard, x, y, checkPiece.getTeamColor(), true);
-        // Diagonal 2 / down threat
+        if (position.getX() < checkPiece.getPosition().getX() && position.getY() > checkPiece.getPosition().getY()) {
+            for (int x = checkPiece.getPosition().getX() - 1; x > position.getX() && y < position.getY(); x--, y++) {
+                saviorPieces.addAll(findAllSaviorPieces(chessboard, x, y, checkPiece.getTeamColor(), true));
+            }
+        }
+        //Handle Diagonal Down Left threat
         y = checkPiece.getPosition().getY() - 1;
-        if (xPos > checkPiece.getPosition().getX() && yPos < checkPiece.getPosition().getY())
-            for (int x = checkPiece.getPosition().getX() + 1; x < xPos && y > yPos; x++, y--)
-                findAllSaviorPieces(chessboard, x, y, checkPiece.getTeamColor(), true);
+        if (position.getX() > checkPiece.getPosition().getX() && position.getY() < checkPiece.getPosition().getY()) {
+            for (int x = checkPiece.getPosition().getX() + 1; x < position.getX() && y > position.getY(); x++, y--) {
+                saviorPieces.addAll(findAllSaviorPieces(chessboard, x, y, checkPiece.getTeamColor(), true));
+            }
+        }
+        chessboard.getGameManagement().getSaviorPieces().addAll(saviorPieces);
     }
 
-    //TODO Return Piece List
-    private void findAllSaviorPieces(ChessBoardGameInterface chessBoard, int xPos, int yPos, TeamColor teamColor, boolean protect) {
+    //TODO Comment
+    private List<PieceInterface> findAllSaviorPieces(ChessBoardGameInterface chessBoard, int xPos, int yPos, TeamColor teamColor, boolean protect) {
+        List<PieceInterface> saviorPieces =  new ArrayList<>();
         TeamColor enemyType = getEnemyTeamColor(teamColor);
         //Horizontal Left Alignment
         for(int x = xPos - 1; x >= 0; x--) {
@@ -406,7 +429,7 @@ public class GameLogic {
             }
             else if (chessBoard.getBoardPosition(x, yPos) == enemyType) {
                 if (chessBoard.getPiece(x, yPos) != null && (chessBoard.getPiece(x, yPos) instanceof Queen || chessBoard.getPiece(x, yPos) instanceof Rook)) {
-                    chessBoard.getGameManagement().getSaviorPieces().add(chessBoard.getPiece(x, yPos));
+                    saviorPieces.add(chessBoard.getPiece(x, yPos));
                 } else {
                     break;
                 }
@@ -419,132 +442,148 @@ public class GameLogic {
             }
             else if (chessBoard.getBoardPosition(x, yPos) == enemyType) {
                 if (chessBoard.getPiece(x, yPos) != null && (chessBoard.getPiece(x, yPos) instanceof Queen || chessBoard.getPiece(x, yPos) instanceof Rook)) {
-                    chessBoard.getGameManagement().getSaviorPieces().add(chessBoard.getPiece(x, yPos));
+                    saviorPieces.add(chessBoard.getPiece(x, yPos));
                 }
                 else {
                     break;
                 }
             }
         }
-        // Vertical Up
-        for (int y = yPos - 1; y >= 0; y--)
-        {
-            if (chessBoard.getBoardPosition(xPos, y) == teamColor)
+        //Vertical Up Alignment
+        for (int y = yPos - 1; y >= 0; y--) {
+            if (chessBoard.getBoardPosition(xPos, y) == teamColor) {
                 break;
-            else if (chessBoard.getBoardPosition(xPos, y) == enemyType)
-            {
-                if (enemyType == TeamColor.Black && protect && y == yPos - 1 && chessBoard.getPiece(xPos, y) != null && chessBoard.getPiece(xPos, y) instanceof Pawn)
-                    chessBoard.getGameManagement().getSaviorPieces().add(chessBoard.getPiece(xPos, y));
-                if (enemyType == TeamColor.Black && protect && y == yPos - 2 && chessBoard.getPiece(xPos, y) != null && chessBoard.getPiece(xPos, y) instanceof Pawn && chessBoard.getPiece(xPos, y).isFirstTime())
-                    chessBoard.getGameManagement().getSaviorPieces().add(chessBoard.getPiece(xPos, y));
-                if (chessBoard.getPiece(xPos, y) != null && (chessBoard.getPiece(xPos, y) instanceof Queen || chessBoard.getPiece(xPos, y) instanceof Rook))
-                    chessBoard.getGameManagement().getSaviorPieces().add(chessBoard.getPiece(xPos, y));
-                else
+            }
+            else if (chessBoard.getBoardPosition(xPos, y) == enemyType) {
+                if (enemyType == TeamColor.Black && protect && y == yPos - 1 && chessBoard.getPiece(xPos, y) != null && chessBoard.getPiece(xPos, y) instanceof Pawn) {
+                    saviorPieces.add(chessBoard.getPiece(xPos, y));
+                }
+                if (enemyType == TeamColor.Black && protect && y == yPos - 2 && chessBoard.getPiece(xPos, y) != null && chessBoard.getPiece(xPos, y) instanceof Pawn && chessBoard.getPiece(xPos, y).isFirstTime()) {
+                    saviorPieces.add(chessBoard.getPiece(xPos, y));
+                }
+                if (chessBoard.getPiece(xPos, y) != null && (chessBoard.getPiece(xPos, y) instanceof Queen || chessBoard.getPiece(xPos, y) instanceof Rook)) {
+                    saviorPieces.add(chessBoard.getPiece(xPos, y));
+                }
+                else {
                     break;
+                }
             }
         }
-        // Vertical Down
-        for (int y = yPos + 1; y < ChessBoard.boardSize; y++)
-        {
-            if (chessBoard.getBoardPosition(xPos, y) == teamColor)
+        //Vertical Down Alignment
+        for (int y = yPos + 1; y < ChessBoard.boardSize; y++) {
+            if (chessBoard.getBoardPosition(xPos, y) == teamColor) {
                 break;
-            else if (chessBoard.getBoardPosition(xPos, y) == enemyType)
-            {
-                if (enemyType == TeamColor.White && protect && y == yPos + 1 && chessBoard.getPiece(xPos, y) != null && chessBoard.getPiece(xPos, y) instanceof Pawn)
-                    chessBoard.getGameManagement().getSaviorPieces().add(chessBoard.getPiece(xPos, y));
-                if (enemyType == TeamColor.White && protect && y == yPos + 2 && chessBoard.getPiece(xPos, y) != null && chessBoard.getPiece(xPos, y) instanceof Pawn && chessBoard.getPiece(xPos, y).isFirstTime())
-                    chessBoard.getGameManagement().getSaviorPieces().add(chessBoard.getPiece(xPos, y));
-                if (chessBoard.getPiece(xPos, y) != null && (chessBoard.getPiece(xPos, y) instanceof Queen || chessBoard.getPiece(xPos, y) instanceof Rook))
-                    chessBoard.getGameManagement().getSaviorPieces().add(chessBoard.getPiece(xPos, y));
-                else
+            }
+            else if (chessBoard.getBoardPosition(xPos, y) == enemyType) {
+                if (enemyType == TeamColor.White && protect && y == yPos + 1 && chessBoard.getPiece(xPos, y) != null && chessBoard.getPiece(xPos, y) instanceof Pawn) {
+                    saviorPieces.add(chessBoard.getPiece(xPos, y));
+                }
+                if (enemyType == TeamColor.White && protect && y == yPos + 2 && chessBoard.getPiece(xPos, y) != null && chessBoard.getPiece(xPos, y) instanceof Pawn && chessBoard.getPiece(xPos, y).isFirstTime()) {
+                    saviorPieces.add(chessBoard.getPiece(xPos, y));
+                }
+                if (chessBoard.getPiece(xPos, y) != null && (chessBoard.getPiece(xPos, y) instanceof Queen || chessBoard.getPiece(xPos, y) instanceof Rook)) {
+                    saviorPieces.add(chessBoard.getPiece(xPos, y));
+                }
+                else {
                     break;
+                }
             }
         }
-        // Diagonal 1 \ Up
-        for (int y = yPos - 1, x = xPos - 1; y >= 0 && x >= 0; y--, x--)
-        {
-            if (chessBoard.getBoardPosition(x, y) == teamColor)
+        //Diagonal Up Left Alignment
+        for (int y = yPos - 1, x = xPos - 1; y >= 0 && x >= 0; y--, x--) {
+            if (chessBoard.getBoardPosition(x, y) == teamColor) {
                 break;
-            else if (chessBoard.getBoardPosition(x, y) == enemyType)
-            {
-                if (!protect && y == yPos - 1 && chessBoard.getBoardPosition(x, y) != null && chessBoard.getPiece(x, y) != null && (teamColor == TeamColor.White && chessBoard.getPiece(x, y) instanceof Pawn))
-                    chessBoard.getGameManagement().getSaviorPieces().add(chessBoard.getPiece(x, y));
-                if (chessBoard.getBoardPosition(x, y) != null && chessBoard.getPiece(x, y) != null && (chessBoard.getPiece(x, y) instanceof Queen || chessBoard.getPiece(x, y) instanceof Bishop))
-                    chessBoard.getGameManagement().getSaviorPieces().add(chessBoard.getPiece(x, y));
-                else
+            }
+            else if (chessBoard.getBoardPosition(x, y) == enemyType) {
+                if (!protect && y == yPos - 1 && chessBoard.getBoardPosition(x, y) != null && chessBoard.getPiece(x, y) != null && (teamColor == TeamColor.White && chessBoard.getPiece(x, y) instanceof Pawn)) {
+                    saviorPieces.add(chessBoard.getPiece(x, y));
+                }
+                if (chessBoard.getBoardPosition(x, y) != null && chessBoard.getPiece(x, y) != null && (chessBoard.getPiece(x, y) instanceof Queen || chessBoard.getPiece(x, y) instanceof Bishop)) {
+                    saviorPieces.add(chessBoard.getPiece(x, y));
+                }
+                else {
                     break;
+                }
             }
         }
-        // Diagonal 1 \ Down
-        for (int y = yPos + 1, x = xPos + 1; y < ChessBoard.boardSize && x < ChessBoard.boardSize; y++, x++)
-        {
-            if (chessBoard.getBoardPosition(x, y) == teamColor)
+        //Diagonal Down Right Alignment
+        for (int y = yPos + 1, x = xPos + 1; y < ChessBoard.boardSize && x < ChessBoard.boardSize; y++, x++) {
+            if (chessBoard.getBoardPosition(x, y) == teamColor) {
                 break;
-            else if (chessBoard.getBoardPosition(x, y) == enemyType)
-            {
-                if (!protect && y == yPos + 1 && chessBoard.getBoardPosition(x, y) != null && chessBoard.getPiece(x, y) != null && (teamColor == TeamColor.Black && chessBoard.getPiece(x, y) instanceof Pawn))
-                    chessBoard.getGameManagement().getSaviorPieces().add(chessBoard.getPiece(x, y));
-                if (chessBoard.getBoardPosition(x, y) != null && chessBoard.getPiece(x, y) != null && (chessBoard.getPiece(x, y) instanceof Queen || chessBoard.getPiece(x, y) instanceof Bishop))
-                    chessBoard.getGameManagement().getSaviorPieces().add(chessBoard.getPiece(x, y));
-                else
+            }
+            else if (chessBoard.getBoardPosition(x, y) == enemyType) {
+                if (!protect && y == yPos + 1 && chessBoard.getBoardPosition(x, y) != null && chessBoard.getPiece(x, y) != null && (teamColor == TeamColor.Black && chessBoard.getPiece(x, y) instanceof Pawn)) {
+                    saviorPieces.add(chessBoard.getPiece(x, y));
+                }
+                if (chessBoard.getBoardPosition(x, y) != null && chessBoard.getPiece(x, y) != null && (chessBoard.getPiece(x, y) instanceof Queen || chessBoard.getPiece(x, y) instanceof Bishop)) {
+                    saviorPieces.add(chessBoard.getPiece(x, y));
+                }
+                else {
                     break;
+                }
             }
         }
-        // Diagonal 2 / Up
-        for (int y = yPos - 1, x = xPos + 1; y >= 0 && x < ChessBoard.boardSize; y--, x++)
-        {
-            if (chessBoard.getBoardPosition(x, y) == teamColor)
+        //Diagonal Up Right Alignment
+        for (int y = yPos - 1, x = xPos + 1; y >= 0 && x < ChessBoard.boardSize; y--, x++) {
+            if (chessBoard.getBoardPosition(x, y) == teamColor) {
                 break;
-            else if (chessBoard.getBoardPosition(x, y) == enemyType)
-            {
-                if (!protect && y == yPos - 1 && chessBoard.getBoardPosition(x, y) != null && chessBoard.getPiece(x, y) != null && (teamColor == TeamColor.White && chessBoard.getPiece(x, y) instanceof Pawn))
-                    chessBoard.getGameManagement().getSaviorPieces().add(chessBoard.getPiece(x, y));
-                if (chessBoard.getBoardPosition(x, y) != null && chessBoard.getPiece(x, y) != null && (chessBoard.getPiece(x, y) instanceof Queen || chessBoard.getPiece(x, y) instanceof Bishop))
-                    chessBoard.getGameManagement().getSaviorPieces().add(chessBoard.getPiece(x, y));
-                else
+            }
+            else if (chessBoard.getBoardPosition(x, y) == enemyType) {
+                if (!protect && y == yPos - 1 && chessBoard.getBoardPosition(x, y) != null && chessBoard.getPiece(x, y) != null && (teamColor == TeamColor.White && chessBoard.getPiece(x, y) instanceof Pawn)) {
+                    saviorPieces.add(chessBoard.getPiece(x, y));
+                }
+                if (chessBoard.getBoardPosition(x, y) != null && chessBoard.getPiece(x, y) != null && (chessBoard.getPiece(x, y) instanceof Queen || chessBoard.getPiece(x, y) instanceof Bishop)) {
+                    saviorPieces.add(chessBoard.getPiece(x, y));
+                }
+                else {
                     break;
+                }
             }
         }
-        // Diagonal 2 / Down
-        for (int y = yPos + 1, x = xPos - 1; y < ChessBoard.boardSize && x >= 0; y++, x--)
-        {
-            if (chessBoard.getBoardPosition(x, y) == teamColor)
+        //Diagonal Down Left Alignment
+        for (int y = yPos + 1, x = xPos - 1; y < ChessBoard.boardSize && x >= 0; y++, x--) {
+            if (chessBoard.getBoardPosition(x, y) == teamColor) {
                 break;
-            else if (chessBoard.getBoardPosition(x, y) == enemyType)
-            {
-                if (!protect && y == yPos + 1 && chessBoard.getBoardPosition(x, y) != null && chessBoard.getPiece(x, y) != null && (teamColor == TeamColor.Black && chessBoard.getPiece(x, y) instanceof Pawn))
-                    chessBoard.getGameManagement().getSaviorPieces().add(chessBoard.getPiece(x, y));
-                if (chessBoard.getBoardPosition(x, y) != null && (chessBoard.getPiece(x, y) instanceof Queen || chessBoard.getPiece(x, y) instanceof Bishop))
-                    chessBoard.getGameManagement().getSaviorPieces().add(chessBoard.getPiece(x, y));
-                else
+            }
+            else if (chessBoard.getBoardPosition(x, y) == enemyType) {
+                if (!protect && y == yPos + 1 && chessBoard.getBoardPosition(x, y) != null && chessBoard.getPiece(x, y) != null && (teamColor == TeamColor.Black && chessBoard.getPiece(x, y) instanceof Pawn)) {
+                    saviorPieces.add(chessBoard.getPiece(x, y));
+                }
+                if (chessBoard.getBoardPosition(x, y) != null && (chessBoard.getPiece(x, y) instanceof Queen || chessBoard.getPiece(x, y) instanceof Bishop)) {
+                    saviorPieces.add(chessBoard.getPiece(x, y));
+                }
+                else {
                     break;
+                }
             }
         }
-        // Knight
-        for (int y = -2; y <= 2; y++)
-        {
-            if (y != 0)
-            {
+        //Knight Alignment
+        for (int y = -2; y <= 2; y++) {
+            if (y != 0) {
                 int x = y % 2 == 0 ? 1 : 2;
-                if (yPos + y >= 0 && yPos + y < ChessBoard.boardSize && xPos - x >= 0 && xPos - x < ChessBoard.boardSize && chessBoard.getBoardPosition(xPos - x, yPos + y) != teamColor && chessBoard.getBoardPosition(xPos - x, yPos + y) != null)
-                {
-                    if (chessBoard.getPiece(xPos - x, yPos + y) != null && chessBoard.getPiece(xPos - x, yPos + y) instanceof Knight)
-                        chessBoard.getGameManagement().getSaviorPieces().add(chessBoard.getPiece(xPos - x, yPos + y));
+                if (yPos + y >= 0 && yPos + y < ChessBoard.boardSize && xPos - x >= 0 && xPos - x < ChessBoard.boardSize && chessBoard.getBoardPosition(xPos - x, yPos + y) != teamColor && chessBoard.getBoardPosition(xPos - x, yPos + y) != null) {
+                    if (chessBoard.getPiece(xPos - x, yPos + y) != null && chessBoard.getPiece(xPos - x, yPos + y) instanceof Knight) {
+                        saviorPieces.add(chessBoard.getPiece(xPos - x, yPos + y));
+                    }
                 }
-                if (yPos + y >= 0 && yPos + y < ChessBoard.boardSize && xPos + x >= 0 && xPos + x < ChessBoard.boardSize && chessBoard.getBoardPosition(xPos + x, yPos + y) != teamColor && chessBoard.getBoardPosition(xPos + x, yPos + y) != null)
-                {
-                    if (chessBoard.getPiece(xPos + x, yPos + y) != null && chessBoard.getPiece(xPos + x, yPos + y) instanceof Knight)
-                        chessBoard.getGameManagement().getSaviorPieces().add(chessBoard.getPiece(xPos + x, yPos + y));
+                if (yPos + y >= 0 && yPos + y < ChessBoard.boardSize && xPos + x >= 0 && xPos + x < ChessBoard.boardSize && chessBoard.getBoardPosition(xPos + x, yPos + y) != teamColor && chessBoard.getBoardPosition(xPos + x, yPos + y) != null) {
+                    if (chessBoard.getPiece(xPos + x, yPos + y) != null && chessBoard.getPiece(xPos + x, yPos + y) instanceof Knight) {
+                        saviorPieces.add(chessBoard.getPiece(xPos + x, yPos + y));
+                    }
                 }
             }
         }
+        return saviorPieces;
     }
 
-    private void canCapture(ChessBoardGameInterface chessboard, PieceInterface checkPiece)
-    {
-        findAllSaviorPieces(chessboard, checkPiece.getPosition().getX(), checkPiece.getPosition().getY(), checkPiece.getTeamColor(), false);
+    //TODO Comment
+    //TODO Check this method
+    private void canCapture(ChessBoardGameInterface chessboard, PieceInterface checkPiece) {
+        chessboard.getGameManagement().getSaviorPieces().addAll(findAllSaviorPieces(chessboard, checkPiece.getPosition().getX(), checkPiece.getPosition().getY(), checkPiece.getTeamColor(), false));
     }
 
+    //TODO Comment
+    //TODO Reform implementation
     private boolean isLimitPieceStalemate(ChessBoardGameInterface chessBoard) {
         if (piecesCount(chessBoard, Queen.class, TeamColor.White) != 0 || piecesCount(chessBoard, Queen.class, TeamColor.Black) != 0)
             return (false);
@@ -560,6 +599,7 @@ public class GameLogic {
         else return piecesCount(chessBoard, Pawn.class, TeamColor.White) <= 1 && piecesCount(chessBoard, Pawn.class, TeamColor.White) <= 1;
     }
 
+    //TODO Comment
     private int piecesCount(ChessBoardGameInterface chessBoard, Class pieceClass, TeamColor teamColor) {
         int count = 0;
         for(int x = 0 ; x < ChessBoard.boardSize ; x++) {
@@ -573,6 +613,7 @@ public class GameLogic {
         return count;
     }
 
+    //TODO Comment
     public static TeamColor getEnemyTeamColor(TeamColor teamColor) {
         if (teamColor == TeamColor.White) {
             return TeamColor.Black;

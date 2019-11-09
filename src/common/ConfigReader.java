@@ -9,6 +9,7 @@ public class ConfigReader {
 
     private static Map config;
 
+    //TODO Comment
     public static int getInt(String key) {
         if(config == null) {
             loadConfig();
@@ -16,6 +17,7 @@ public class ConfigReader {
         return Integer.parseInt((String)config.get(key));
     }
 
+    //TODO Comment
     private static void loadConfig() {
         try {
             YamlReader reader = new YamlReader(new FileReader(System.getProperty("user.dir") + "/config/config.yml"));

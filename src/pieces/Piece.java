@@ -8,10 +8,7 @@ import view.ImageManager;
 
 import java.util.List;
 
-/**
- * - firstTime is a boolean to know if the piece is used for the first time
- * - savior is a boolean to know if a the piece can move in a check situation
- */
+@SuppressWarnings("Duplicates")
 public abstract class Piece extends LayoutEntity implements PieceInterface {
 
     private TeamColor teamColor;

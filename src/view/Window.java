@@ -6,14 +6,14 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.StrokeType;
 import javafx.scene.transform.Translate;
 
-public class Window extends Group {
+public class Window extends Group implements WindowInterface {
 
 	private Rectangle rectangle;
 	private Translate pos;
 	private boolean highlighted;
 
 	/**
-	 * Make a new Rectangle and Translate, add the Translate to the Rectangle, add the Rectagle to the Group
+	 * Make a new Rectangle and Translate, add the Translate to the Rectangle, add the Rectangle to the Group
 	 * @param i int
 	 */
 	public Window(int i) {
@@ -38,11 +38,6 @@ public class Window extends Group {
 		return highlighted;
 	}
 
-	/**
-	 * Call the super class method and update the height and the width of the rectangle representing the window
-	 * @param width double
-	 * @param height double
-	 */
 	@Override
 	public void resize(double width, double height) {
 		super.resize(width, height);
@@ -50,11 +45,6 @@ public class Window extends Group {
 		rectangle.setWidth(width);
 	}
 
-	/**
-	 * Call the superclass method and update the relevant transform
-	 * @param x double
-	 * @param y double
-	 */
 	@Override
 	public void relocate(double x, double y) {
 		super.relocate(x, y);

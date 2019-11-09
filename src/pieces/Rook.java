@@ -8,6 +8,7 @@ import game.ChessBoard;
 import java.util.ArrayList;
 import java.util.List;
 
+@SuppressWarnings("Duplicates")
 public class Rook extends Piece {
 
 	public Rook(TeamColor teamColor, Position position) {

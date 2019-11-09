@@ -8,6 +8,7 @@ import game.ChessBoard;
 import java.util.ArrayList;
 import java.util.List;
 
+@SuppressWarnings("Duplicates")
 public class Queen extends Piece {
 	
 	public Queen(TeamColor teamColor, Position position) {
