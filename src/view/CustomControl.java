@@ -7,15 +7,9 @@ import javafx.scene.input.KeyCode;
 
 public class CustomControl extends Control {
 
-	//region Attributes
-
 	private ChessBoardViewInterface chessBoard;
 	private StatusBar statusBar;
 	private int statusBarSize = 100;
-
-	//endregion
-
-	//region Constructor
 
 	/**
 	 * CustomControl Constructor
@@ -37,12 +31,7 @@ public class CustomControl extends Control {
 			}
 		});
 		statusBar.getResetButton().setOnAction(event -> this.chessBoard.resetGame());
-		
 	}
-
-	//endregion
-
-	//region Public Methods
 
 	@Override
 	public void resize(double width, double height){
@@ -53,7 +42,5 @@ public class CustomControl extends Control {
 		statusBar.resize(width, statusBarSize);
 		statusBar.setTranslateY(-(halfSize));
 	}
-
-	//endregion
 
 }

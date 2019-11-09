@@ -10,6 +10,9 @@ import pieces.*;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+/**
+ * Game Logic Management
+ */
 @Aspect
 public class GameLogic {
 
@@ -38,114 +41,110 @@ public class GameLogic {
     @After("execution(public void game.ChessBoard.movePiece(double, double))")
     public void afterPieceMovement(JoinPoint joinPoint) {
         ChessBoard chessBoard = (ChessBoard) joinPoint.getTarget();
-        if (chessBoard.getGameManagement().getCurrentPlayer() == TeamColor.White) {
-            chessBoard.getGameManagement().setCurrentPlayer(TeamColor.Black);
-            chessBoard.getStatusBar().whitePlayerAlert.setText("");
-            chessBoard.getGameManagement().setCheckState(false);
-            for (PieceInterface item : chessBoard.getGameManagement().getSaviorPieces()) {
-                item.setSavior(false);
-            }
-            if (MovementRules.isCheck(chessBoard, chessBoard.getKing(TeamColor.Black).getPosition().getX(), chessBoard.getKing(TeamColor.Black).getPosition().getY(), chessBoard.getGameManagement().getCurrentPlayer(), true)) {
-                chessBoard.getGameManagement().getCheckPieces().clear();
-                chessBoard.getGameManagement().getSaviorPieces().clear();
-                chessBoard.getGameManagement().setCheckState(true);
-                findAllCheckPieces(chessBoard, chessBoard.getKing(TeamColor.Black).getPosition().getX(), chessBoard.getKing(TeamColor.Black).getPosition().getY(), chessBoard.getGameManagement().getCurrentPlayer());
-                if (isCheckmate(chessBoard, chessBoard.getKing(TeamColor.Black).getPosition().getX(), chessBoard.getKing(TeamColor.Black).getPosition().getY(), chessBoard.getGameManagement().getCurrentPlayer())) {
-                    chessBoard.getGameManagement().setCheckmate(true);
-                    chessBoard.getStatusBar().blackPlayerAlert.setText("Black player is in checkmate");
-                    chessBoard.getStatusBar().winner.setText("White player won !");
-                }
-                else {
-                    chessBoard.getStatusBar().blackPlayerAlert.setText("Black player is in check");
-                }
-            }
-            else if (isStalemate(chessBoard, chessBoard.getKing(TeamColor.Black), chessBoard.getGameManagement().getCurrentPlayer())) {
-                chessBoard.getStatusBar().winner.setText("Stalemate !");
+        //Change the player
+        TeamColor player = getEnemyTeamColor(chessBoard.getGameManagement().getCurrentPlayer());
+        chessBoard.getGameManagement().setCurrentPlayer(player);
+        chessBoard.getStatusBar().removeAlert(getEnemyTeamColor(player));
+        chessBoard.getGameManagement().setCheckState(false);
+        for (PieceInterface item : chessBoard.getGameManagement().getSaviorPieces()) {
+            item.setSavior(false);
+        }
+        //If the player is in a check situation
+        if (MovementRules.isCheck(chessBoard, chessBoard.getKing(player).getPosition().getX(), chessBoard.getKing(player).getPosition().getY(), player, true)) {
+            chessBoard.getGameManagement().getCheckPieces().clear();
+            chessBoard.getGameManagement().getSaviorPieces().clear();
+            chessBoard.getGameManagement().setCheckState(true);
+            findAllCheckPieces(chessBoard, chessBoard.getKing(player).getPosition().getX(), chessBoard.getKing(player).getPosition().getY(), player);
+            //If the player is in a checkmate situation
+            if (isCheckmate(chessBoard, chessBoard.getKing(player).getPosition().getX(), chessBoard.getKing(player).getPosition().getY(), player)) {
+                chessBoard.getGameManagement().setCheckmate(true);
+                chessBoard.getStatusBar().alertCheckmate(player);
+                chessBoard.getStatusBar().alertWinner(getEnemyTeamColor(player));
             }
             else {
-                chessBoard.getStatusBar().blackPlayerAlert.setText("Black Player turn");
+                chessBoard.getStatusBar().alertCheck(player);
             }
+        }
+        //If the player is in a stalemate situation
+        else if (isStalemate(chessBoard, chessBoard.getKing(TeamColor.Black), player)) {
+            chessBoard.getStatusBar().alertStalemate();
         }
         else {
-            chessBoard.getGameManagement().setCurrentPlayer(TeamColor.White);
-            chessBoard.getStatusBar().blackPlayerAlert.setText("");
-            chessBoard.getGameManagement().setCheckState(false);
-            for (PieceInterface item : chessBoard.getGameManagement().getSaviorPieces()) {
-                item.setSavior(false);
-            }
-            if (MovementRules.isCheck(chessBoard, chessBoard.getKing(TeamColor.White).getPosition().getX(), chessBoard.getKing(TeamColor.White).getPosition().getY(), chessBoard.getGameManagement().getCurrentPlayer(), true)) {
-                chessBoard.getGameManagement().getCheckPieces().clear();
-                chessBoard.getGameManagement().getSaviorPieces().clear();
-                chessBoard.getGameManagement().setCheckState(true);
-                findAllCheckPieces(chessBoard, chessBoard.getKing(TeamColor.White).getPosition().getX(), chessBoard.getKing(TeamColor.White).getPosition().getY(), chessBoard.getGameManagement().getCurrentPlayer());
-                if (isCheckmate(chessBoard, chessBoard.getKing(TeamColor.White).getPosition().getX(), chessBoard.getKing(TeamColor.White).getPosition().getY(), chessBoard.getGameManagement().getCurrentPlayer())) {
-                    chessBoard.getGameManagement().setCheckmate(true);
-                    chessBoard.getStatusBar().whitePlayerAlert.setText("White player is in checkmate");
-                    chessBoard.getStatusBar().winner.setText("Black player won !");
-                }
-                else {
-                    chessBoard.getStatusBar().whitePlayerAlert.setText("White player is in check");
-                }
-            }
-            else if (isStalemate(chessBoard, chessBoard.getKing(TeamColor.White), chessBoard.getGameManagement().getCurrentPlayer())) {
-                chessBoard.getStatusBar().winner.setText("Stalemate !");
-            }
-            else {
-                chessBoard.getStatusBar().whitePlayerAlert.setText("White Player turn");
-            }
+            chessBoard.getStatusBar().alertTurn(player);
         }
-        chessBoard.getTimer().setPlayerTurn(chessBoard.getGameManagement().getCurrentPlayer());
+        chessBoard.getTimer().setPlayerTurn(player);
     }
 
+    /**
+     * Return if the player if Stalemate or note
+     * @param chessBoard ChessBoardInterface
+     * @param king Piece
+     * @param teamColor TeamColor
+     * @return boolean
+     */
     private boolean isStalemate(ChessBoardGameInterface chessBoard, Piece king, TeamColor teamColor) {
         if (isOneKingStalemate(chessBoard, king, teamColor) || isLimitPieceStalemate(chessBoard)) {
             chessBoard.getGameManagement().setStalemate(false);
-            return (true);
+            return true;
         }
-        return (false);
+        return false;
     }
 
-    private boolean isOneKingStalemate(ChessBoardGameInterface chessBoard, Piece king, TeamColor teamColor)
-    {
+    /**
+     * Return true if the player has only one King and is Stalemate
+     * @param chessBoard ChessBoard
+     * @param king Piece
+     * @param teamColor TeamColor
+     * @return boolean
+     */
+    private boolean isOneKingStalemate(ChessBoardGameInterface chessBoard, Piece king, TeamColor teamColor) {
         int nbPiece = 0;
         boolean stalemate = true;
-
-        // A Player has only 1 king left, which is not in check position and can't move
-        for (int y = 0; y < ChessBoard.boardSize; y++)
-        {
-            for (int x = 0; x < ChessBoard.boardSize; x++)
-            {
-                if (chessBoard.getBoardPosition(x, y) == teamColor)
+        for (int y = 0; y < ChessBoard.boardSize; y++) {
+            for (int x = 0; x < ChessBoard.boardSize; x++) {
+                if (chessBoard.getBoardPosition(x, y) == teamColor) {
                     nbPiece++;
+                }
             }
         }
-        if (nbPiece == 1)
-        {
-            for (int y = king.getPosition().getY() - 1; y <= king.getPosition().getY() + 1; y++)
-            {
-                for (int x = king.getPosition().getX() - 1; x <= king.getPosition().getX() + 1; x++)
-                {
-                    if(y >= 0 && y < ChessBoard.boardSize && x >= 0 && x < ChessBoard.boardSize && chessBoard.getBoardPosition(x, y) != teamColor)
-                    {
-                        if (!MovementRules.isCheck(chessBoard, x, y, teamColor, true))
-                        {
-                            stalemate = false;
-                            break;
-                        }
+        if (nbPiece == 1) {
+            for (int y = king.getPosition().getY() - 1; y <= king.getPosition().getY() + 1; y++) {
+                for (int x = king.getPosition().getX() - 1; x <= king.getPosition().getX() + 1; x++) {
+                    if(pieceInCenterAndNextToEnemyAndNotInCheck(chessBoard, x, y, teamColor)) {
+                        stalemate = false;
+                        break;
                     }
                 }
-                if (!stalemate)
+                if (!stalemate) {
                     break;
+                }
             }
         }
-        else
+        else {
             stalemate = false;
-        return (stalemate);
+        }
+        return stalemate;
     }
 
+    /**
+     * Return true if a Piece is not next to a border and next to a enemy and the player is in check situation
+     * @param chessBoard ChessBoard
+     * @param x int
+     * @param y int
+     * @param teamColor TeamColor
+     * @return boolean
+     */
+    private boolean pieceInCenterAndNextToEnemyAndNotInCheck(ChessBoardGameInterface chessBoard, int x, int y, TeamColor teamColor) {
+        if(y >= 0 && y < ChessBoard.boardSize && x >= 0 && x < ChessBoard.boardSize && chessBoard.getBoardPosition(x, y) != teamColor) {
+            return !MovementRules.isCheck(chessBoard, x, y, teamColor, true);
+        }
+        return false;
+    }
+
+    //TODO make this method returning a Piece list of add this list of the game management
     private void findAllCheckPieces(ChessBoardGameInterface chessBoard, int xPos, int yPos, TeamColor teamColor) {
-        int y = 0;
-        int x = 0;
+        int y;
+        int x;
         TeamColor enemyType = getEnemyTeamColor(teamColor);
 
         // Horizontal Left
@@ -286,11 +285,9 @@ public class GameLogic {
         int y;
         for (y = yPos - 1; y <= yPos + 1; y++) {
             for (x = xPos - 1; x <= xPos + 1; x++) {
-                if(y >= 0 && y < ChessBoard.boardSize && x >= 0 && x < ChessBoard.boardSize && chessBoard.getBoardPosition(x, y) != teamColor) {
-                    if (!MovementRules.isCheck(chessBoard, x, y, teamColor, true)) {
-                        checkmate = false;
-                        break;
-                    }
+                if(pieceInCenterAndNextToEnemyAndNotInCheck(chessBoard, x, y, teamColor)) {
+                    checkmate = false;
+                    break;
                 }
             }
             if (!checkmate)
@@ -364,8 +361,8 @@ public class GameLogic {
     }
 
     private void findAllSaviorPieces(ChessBoardGameInterface chessBoard, int xPos, int yPos, TeamColor teamColor, boolean protect) {
-        int y = 0;
-        int x = 0;
+        int y;
+        int x;
         TeamColor enemyType = getEnemyTeamColor(teamColor);
 
         // Horizontal Left
@@ -465,7 +462,7 @@ public class GameLogic {
                 break;
             else if (chessBoard.getBoardPosition(x, y) == enemyType)
             {
-                if (protect == false && y == yPos - 1 && chessBoard.getBoardPosition(x, y) != null && chessBoard.getPiece(x, y) != null && (teamColor == TeamColor.White && chessBoard.getPiece(x, y) instanceof Pawn))
+                if (!protect && y == yPos - 1 && chessBoard.getBoardPosition(x, y) != null && chessBoard.getPiece(x, y) != null && (teamColor == TeamColor.White && chessBoard.getPiece(x, y) instanceof Pawn))
                     chessBoard.getGameManagement().getSaviorPieces().add(chessBoard.getPiece(x, y));
                 if (chessBoard.getBoardPosition(x, y) != null && chessBoard.getPiece(x, y) != null && (chessBoard.getPiece(x, y) instanceof Queen || chessBoard.getPiece(x, y) instanceof Bishop))
                     chessBoard.getGameManagement().getSaviorPieces().add(chessBoard.getPiece(x, y));
@@ -480,7 +477,7 @@ public class GameLogic {
                 break;
             else if (chessBoard.getBoardPosition(x, y) == enemyType)
             {
-                if (protect == false && y == yPos + 1 && chessBoard.getBoardPosition(x, y) != null && chessBoard.getPiece(x, y) != null && (teamColor == TeamColor.Black && chessBoard.getPiece(x, y) instanceof Pawn))
+                if (!protect && y == yPos + 1 && chessBoard.getBoardPosition(x, y) != null && chessBoard.getPiece(x, y) != null && (teamColor == TeamColor.Black && chessBoard.getPiece(x, y) instanceof Pawn))
                     chessBoard.getGameManagement().getSaviorPieces().add(chessBoard.getPiece(x, y));
                 if (chessBoard.getBoardPosition(x, y) != null && (chessBoard.getPiece(x, y) instanceof Queen || chessBoard.getPiece(x, y) instanceof Bishop))
                     chessBoard.getGameManagement().getSaviorPieces().add(chessBoard.getPiece(x, y));
@@ -513,8 +510,7 @@ public class GameLogic {
         findAllSaviorPieces(chessboard, checkPiece.getPosition().getX(), checkPiece.getPosition().getY(), checkPiece.getTeamColor(), false);
     }
 
-    private boolean isLimitPieceStalemate(ChessBoardGameInterface chessBoard)
-    {
+    private boolean isLimitPieceStalemate(ChessBoardGameInterface chessBoard) {
         if (piecesCount(chessBoard, Queen.class, TeamColor.White) != 0 || piecesCount(chessBoard, Queen.class, TeamColor.Black) != 0)
             return (false);
         else if (piecesCount(chessBoard, Rook.class, TeamColor.White) != 0 || piecesCount(chessBoard, Rook.class, TeamColor.Black) != 0)
@@ -526,9 +522,7 @@ public class GameLogic {
             return (false);
         else if ((piecesCount(chessBoard, Bishop.class, TeamColor.White) == 2) || (piecesCount(chessBoard, Bishop.class, TeamColor.Black) == 2))
             return (false);
-        else if (piecesCount(chessBoard, Pawn.class, TeamColor.White) > 1 || piecesCount(chessBoard, Pawn.class, TeamColor.White) > 1)
-            return (false);
-        return (true);
+        else return piecesCount(chessBoard, Pawn.class, TeamColor.White) <= 1 && piecesCount(chessBoard, Pawn.class, TeamColor.White) <= 1;
     }
 
     private int piecesCount(ChessBoardGameInterface chessBoard, Class pieceClass, TeamColor teamColor) {
@@ -544,7 +538,7 @@ public class GameLogic {
         return count;
     }
 
-    private static TeamColor getEnemyTeamColor(TeamColor teamColor) {
+    public static TeamColor getEnemyTeamColor(TeamColor teamColor) {
         if (teamColor == TeamColor.White) {
             return TeamColor.Black;
         }

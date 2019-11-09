@@ -5,8 +5,6 @@ import javafx.scene.control.SkinBase;
 
 class CustomControlSkin extends SkinBase<CustomControl> implements Skin<CustomControl> {
 
-	//region Constructor
-
 	/**
 	 * CustomControlSkin Constructor
 	 * @param cc CustomControl
@@ -15,5 +13,4 @@ class CustomControlSkin extends SkinBase<CustomControl> implements Skin<CustomCo
 		super(cc);
 	}
 
-	//endregion
 }

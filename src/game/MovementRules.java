@@ -282,14 +282,12 @@ public class MovementRules {
 	 * @return boolean
 	 */
 	public static boolean isCheck(ChessBoardGameInterface chessBoard, int xPos, int yPos, TeamColor teamColor, boolean kingCanCapture) {
-		int y = 0;
-		int x = 0;
+		int y;
+		int x;
 		TeamColor enemyType = getEnemyTeamColor(teamColor);
-		
-		// Horizontal Left
-		for (x = xPos - 1; x >= 0; x--)
-		{
-			if (chessBoard.getBoardPosition(x, yPos) == teamColor && chessBoard.getPiece(x, yPos) instanceof King)
+		//Checking Horizontal Left Alignment
+		for (x = xPos - 1; x >= 0; x--) {
+			if (chessBoard.getBoardPosition(x, yPos) == teamColor && !(chessBoard.getPiece(x, yPos) instanceof King))
 				break;
 			else if (chessBoard.getBoardPosition(x, yPos) == enemyType)
 			{
@@ -301,10 +299,9 @@ public class MovementRules {
 					break;
 			}
 		}
-		// Horizontal Right
-		for (x = xPos + 1; x < ChessBoard.boardSize; x++)
-		{
-			if (chessBoard.getBoardPosition(x, yPos) == teamColor && chessBoard.getPiece(x, yPos) instanceof King)
+		//Checking Horizontal Right Alignment
+		for (x = xPos + 1; x < ChessBoard.boardSize; x++) {
+			if (chessBoard.getBoardPosition(x, yPos) == teamColor && !(chessBoard.getPiece(x, yPos) instanceof King))
 				break;
 			else if (chessBoard.getBoardPosition(x, yPos) == enemyType)
 			{
@@ -319,7 +316,7 @@ public class MovementRules {
 		// Vertical Up
 		for (y = yPos - 1; y >= 0; y--)
 		{
-			if (chessBoard.getBoardPosition(xPos, y) == teamColor && chessBoard.getPiece(xPos, y) instanceof King)
+			if (chessBoard.getBoardPosition(xPos, y) == teamColor && !(chessBoard.getPiece(xPos, y) instanceof King))
 				break;
 			else if (chessBoard.getBoardPosition(xPos, y) == enemyType)
 			{
@@ -334,7 +331,7 @@ public class MovementRules {
 		// Vertical Down
 		for (y = yPos + 1; y < ChessBoard.boardSize; y++)
 		{
-			if (chessBoard.getBoardPosition(xPos, y) == teamColor && chessBoard.getPiece(xPos, y) instanceof King)
+			if (chessBoard.getBoardPosition(xPos, y) == teamColor && !(chessBoard.getPiece(xPos, y) instanceof King))
 				break;
 			else if (chessBoard.getBoardPosition(xPos, y) == enemyType)
 			{
@@ -349,7 +346,7 @@ public class MovementRules {
 		// Diagonal 1 \ Up
 		for (y = yPos - 1, x = xPos - 1; y >= 0 && x >= 0; y--, x--)
 		{
-			if (chessBoard.getBoardPosition(x, y) == teamColor && chessBoard.getPiece(x, y) instanceof King)
+			if (chessBoard.getBoardPosition(x, y) == teamColor && !(chessBoard.getPiece(x, y) instanceof King))
 				break;
 			else if (chessBoard.getBoardPosition(x, y) == enemyType)
 			{
@@ -364,7 +361,7 @@ public class MovementRules {
 		// Diagonal 1 \ Down
 		for (y = yPos + 1, x = xPos + 1; y < ChessBoard.boardSize && x < ChessBoard.boardSize; y++, x++)
 		{
-			if (chessBoard.getBoardPosition(x, y) == teamColor && chessBoard.getPiece(x, y) instanceof King)
+			if (chessBoard.getBoardPosition(x, y) == teamColor && !(chessBoard.getPiece(x, y) instanceof King))
 				break;
 			else if (chessBoard.getBoardPosition(x, y) == enemyType)
 			{
@@ -379,7 +376,7 @@ public class MovementRules {
 		// Diagonal 2 / Up
 		for (y = yPos - 1, x = xPos + 1; y >= 0 && x < ChessBoard.boardSize; y--, x++)
 		{
-			if (chessBoard.getBoardPosition(x, y) == teamColor && chessBoard.getPiece(x, y) instanceof King)
+			if (chessBoard.getBoardPosition(x, y) == teamColor && !(chessBoard.getPiece(x, y) instanceof King))
 				break;
 			else if (chessBoard.getBoardPosition(x, y) == enemyType)
 			{
@@ -394,7 +391,7 @@ public class MovementRules {
 		// Diagonal 2 / Down
 		for (y = yPos + 1, x = xPos - 1; y < ChessBoard.boardSize && x >= 0; y++, x--)
 		{
-			if (chessBoard.getBoardPosition(x, y) == teamColor && chessBoard.getPiece(x, y) instanceof King)
+			if (chessBoard.getBoardPosition(x, y) == teamColor && !(chessBoard.getPiece(x, y) instanceof King))
 				break;
 			else if (chessBoard.getBoardPosition(x, y) == enemyType)
 			{

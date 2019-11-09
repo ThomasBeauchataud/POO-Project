@@ -9,12 +9,12 @@ import javafx.scene.transform.Translate;
 public class Window extends Group {
 
 	private Rectangle rectangle;
-	private Translate pos; 		//translate to set the position of this window
-	private boolean highlighted = false;
+	private Translate pos;
+	private boolean highlighted;
 
 	/**
 	 * Make a new Rectangle and Translate, add the Translate to the Rectangle, add the Rectagle to the Group
-	 * @param i
+	 * @param i int
 	 */
 	public Window(int i) {
 		pos = new Translate();
@@ -40,8 +40,8 @@ public class Window extends Group {
 
 	/**
 	 * Call the super class method and update the height and the width of the rectangle representing the window
-	 * @param width
-	 * @param height
+	 * @param width double
+	 * @param height double
 	 */
 	@Override
 	public void resize(double width, double height) {
@@ -52,8 +52,8 @@ public class Window extends Group {
 
 	/**
 	 * Call the superclass method and update the relevant transform
-	 * @param x
-	 * @param y
+	 * @param x double
+	 * @param y double
 	 */
 	@Override
 	public void relocate(double x, double y) {

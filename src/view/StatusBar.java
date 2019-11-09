@@ -10,19 +10,20 @@ import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.RowConstraints;
+import pieces.TeamColor;
 
-public class StatusBar extends HBox {
+@SuppressWarnings("WeakerAccess")
+public class StatusBar extends HBox implements StatusBarInterface {
 
-	private Button 	resetButton;
-	public Label	whitePlayerAlert;
-	public Label	blackPlayerAlert;
-	public Label	whitePlayerTimer;
-	public Label	blackPlayerTimer;
-	public Label	winner;
-	private GridPane statusBarGp;
+	private Button resetButton;
+	private Label whitePlayerAlert;
+	private Label blackPlayerAlert;
+	private Label whitePlayerTimer;
+	private Label blackPlayerTimer;
+	private Label winner;
 
 	public StatusBar() {
-		statusBarGp = new GridPane();
+		GridPane statusBarGp = new GridPane();
 		resetButton = new Button("Reset");
 		whitePlayerAlert = new Label("");
 		blackPlayerAlert = new Label("");
@@ -39,8 +40,8 @@ public class StatusBar extends HBox {
 		column.setPercentWidth(30);
 		statusBarGp.getColumnConstraints().add(column);
 		statusBarGp.setPrefSize(2000, 100);
-		statusBarGp.getRowConstraints().add(new RowConstraints(70/2));
-		statusBarGp.getRowConstraints().add(new RowConstraints(70/2));
+		statusBarGp.getRowConstraints().add(new RowConstraints(35));
+		statusBarGp.getRowConstraints().add(new RowConstraints(35));
 		statusBarGp.addRow(0, whitePlayerAlert, resetButton, blackPlayerAlert);
 		statusBarGp.addRow(1, whitePlayerTimer, winner, blackPlayerTimer);
 		for (Node n: statusBarGp.getChildren()) {
@@ -62,8 +63,79 @@ public class StatusBar extends HBox {
 		return resetButton;
 	}
 
-	public void setResetButton(Button resetButton) {
-		this.resetButton = resetButton;
+	@Override
+	public void alertCheckmate(TeamColor teamColor) {
+		if(teamColor == TeamColor.Black) {
+			blackPlayerAlert.setText("Black Player is in checkmate");
+		} else {
+			whitePlayerAlert.setText("White Player is in checkmate");
+		}
+	}
+
+	@Override
+	public void alertCheck(TeamColor teamColor) {
+		if(teamColor == TeamColor.Black) {
+			blackPlayerAlert.setText("Black Player is in check");
+		} else {
+			whitePlayerAlert.setText("White Player is in check");
+		}
+	}
+
+	@Override
+	public void alertTurn(TeamColor teamColor) {
+		if(teamColor == TeamColor.Black) {
+			blackPlayerAlert.setText("Black Player turn");
+		} else {
+			whitePlayerAlert.setText("White Player turn");
+		}
+	}
+
+	@Override
+	public void alertWinner(TeamColor teamColor) {
+		winner.setText(teamColor.name() + " Player won !");
+	}
+
+	@Override
+	public void alertStalemate() {
+		winner.setText("Stalemate !");
+	}
+
+	@Override
+	public void alertOutOfTime(TeamColor teamColor) {
+		if(teamColor == TeamColor.White) {
+			whitePlayerAlert.setText("White Player run out of time");
+		} else {
+			blackPlayerAlert.setText("Black Player run out of time");
+		}
+	}
+
+	@Override
+	public void removeAlert(TeamColor teamColor) {
+		if(teamColor == TeamColor.Black) {
+			blackPlayerAlert.setText("");
+		} else {
+			whitePlayerAlert.setText("");
+		}
+	}
+
+	@Override
+	public void resetTimer() {
+		whitePlayerTimer.setText("White timer: 15:00");
+		blackPlayerTimer.setText("Black timer: 15:00");
+	}
+
+	@Override
+	public void removeWinner() {
+		winner.setText("");
+	}
+
+	@Override
+	public Label getPlayerTimer(TeamColor teamColor) {
+		if(teamColor == TeamColor.White) {
+			return whitePlayerTimer;
+		} else {
+			return blackPlayerTimer;
+		}
 	}
 
 	@Override

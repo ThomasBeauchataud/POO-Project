@@ -11,6 +11,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import view.StatusBar;
+import view.StatusBarInterface;
 import view.Window;
 
 import java.util.List;
@@ -21,10 +22,10 @@ public class ChessBoard extends Pane implements ChessBoardGameInterface, ChessBo
 
 	public static int boardSize = 8;
 
-	private GameManagement gameManagement = new GameManagement();
+	private GameManagementInterface gameManagement = new GameManagement();
 	private PieceInterface[][] pieces;
 	private Window[][] windows;
-	private StatusBar statusBar;
+	private StatusBarInterface statusBar;
 	private Rectangle background;
 	private double cell_width;
 	private double cell_height;
@@ -32,10 +33,9 @@ public class ChessBoard extends Pane implements ChessBoardGameInterface, ChessBo
 
 	public ChessBoard(StatusBar newStatusBar) {
 		statusBar = newStatusBar;
-		statusBar.whitePlayerAlert.setText("White Player turn");
-		statusBar.blackPlayerAlert.setText("");
-		statusBar.whitePlayerTimer.setText("White timer: 15:00");
-		statusBar.blackPlayerTimer.setText("Black timer: 15:00");
+		statusBar.alertTurn(TeamColor.White);
+		statusBar.removeAlert(TeamColor.Black);
+		statusBar.resetTimer();
 		background = new Rectangle();
 		background.setFill(Color.WHITE);
 		getChildren().add(background);
@@ -71,7 +71,7 @@ public class ChessBoard extends Pane implements ChessBoardGameInterface, ChessBo
 	}
 
 	@Override
-	public StatusBar getStatusBar() {
+	public StatusBarInterface getStatusBar() {
 		return (statusBar);
 	}
 
@@ -121,11 +121,9 @@ public class ChessBoard extends Pane implements ChessBoardGameInterface, ChessBo
 			}
 		}
 		this.initPiece();
-		statusBar.whitePlayerAlert.setText("White Player turn");
-		statusBar.blackPlayerAlert.setText("");
-		statusBar.whitePlayerTimer.setText("White timer: 15:00");
-		statusBar.blackPlayerTimer.setText("Black timer: 15:00");
-		statusBar.winner.setText("");
+		statusBar.alertTurn(TeamColor.White);
+		statusBar.removeAlert(TeamColor.Black);
+		statusBar.removeWinner();
 		timer.setTimeOver(false);
 		gameManagement.resetGame();
 		timer.setPlayerTurn(gameManagement.getCurrentPlayer());
@@ -213,14 +211,8 @@ public class ChessBoard extends Pane implements ChessBoardGameInterface, ChessBo
 	@Override
 	public void timerOver(TeamColor playerOutOfTime) {
 		timer.timeline.stop();
-		if (playerOutOfTime == TeamColor.White) {
-			statusBar.whitePlayerAlert.setText("White player run out of time");
-			statusBar.winner.setText("Black player won !");
-		}
-		else if (playerOutOfTime == TeamColor.Black) {
-			statusBar.blackPlayerAlert.setText("Black player run out of time");
-			statusBar.winner.setText("White player won !");
-		}
+		statusBar.alertOutOfTime(TeamColor.White);
+		statusBar.alertWinner(GameLogic.getEnemyTeamColor(playerOutOfTime));
 	}
 
 	@Override

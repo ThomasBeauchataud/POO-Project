@@ -24,11 +24,6 @@ public interface PieceInterface extends LayoutEntityInterface {
     Position getPosition();
 
     /**
-     * Reset the Piece attributes
-     */
-    void resetPiece();
-
-    /**
      * Move the Piece to a Position
      * @param chessBoard ChessBoard
      * @param x int

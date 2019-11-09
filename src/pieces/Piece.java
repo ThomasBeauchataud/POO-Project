@@ -112,12 +112,6 @@ public abstract class Piece extends LayoutEntity implements PieceInterface {
     }
 
     @Override
-    public void resetPiece() {
-        this.firstTime = true;
-        this.savior = false;
-    }
-
-    @Override
     public void capture(ChessBoard chessBoard) {
         chessBoard.getChildren().remove(this.getImageView());
     }

@@ -49,11 +49,11 @@ public class Timer {
 		public void handle(ActionEvent event) {
 			if (playerTurn == TeamColor.White && !timeOver && !chessboard.getGameManagement().isCheckmate() && !chessboard.getGameManagement().isStalemate()) {
 				whiteTimer -= 1;
-				chessboard.getStatusBar().whitePlayerTimer.setText("White timer: " + TimeUnit.SECONDS.toMinutes(whiteTimer) + ":" + (whiteTimer % 60));
+				chessboard.getStatusBar().getPlayerTimer(TeamColor.White).setText("White timer: " + TimeUnit.SECONDS.toMinutes(whiteTimer) + ":" + (whiteTimer % 60));
 			}
 			else if (playerTurn == TeamColor.Black && !timeOver) {
 				blackTimer -= 1;
-				chessboard.getStatusBar().blackPlayerTimer.setText("Black timer: " + TimeUnit.SECONDS.toMinutes(blackTimer) + ":" + (blackTimer % 60));
+				chessboard.getStatusBar().getPlayerTimer(TeamColor.Black).setText("Black timer: " + TimeUnit.SECONDS.toMinutes(blackTimer) + ":" + (blackTimer % 60));
 			}
 			if (!timeOver && (whiteTimer == 0 || blackTimer == 0)) {
 				chessboard.timerOver(playerTurn);

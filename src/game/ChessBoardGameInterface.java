@@ -2,7 +2,7 @@ package game;
 
 import pieces.PieceInterface;
 import pieces.TeamColor;
-import view.StatusBar;
+import view.StatusBarInterface;
 
 /**
  * Manage the ChessBoard Game
@@ -45,9 +45,9 @@ public interface ChessBoardGameInterface {
 
     /**
      * Return the StatusBar
-     * @return StatusBar
+     * @return StatusBarInterface
      */
-    StatusBar getStatusBar();
+    StatusBarInterface getStatusBar();
 
     /**
      * Set the time over status for a player
