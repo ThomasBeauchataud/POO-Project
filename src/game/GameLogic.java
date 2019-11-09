@@ -1,5 +1,6 @@
 package game;
 
+import common.Position;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.After;
@@ -9,11 +10,13 @@ import pieces.*;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 /**
  * Game Logic Management
  */
 @Aspect
+@SuppressWarnings("WeakerAccess")
 public class GameLogic {
 
     /**
@@ -54,7 +57,7 @@ public class GameLogic {
             chessBoard.getGameManagement().getCheckPieces().clear();
             chessBoard.getGameManagement().getSaviorPieces().clear();
             chessBoard.getGameManagement().setCheckState(true);
-            findAllCheckPieces(chessBoard, chessBoard.getKing(player).getPosition().getX(), chessBoard.getKing(player).getPosition().getY(), player);
+            chessBoard.getGameManagement().getCheckPieces().addAll(findAllCheckPieces(chessBoard, chessBoard.getKing(player).getPosition(), player));
             //If the player is in a checkmate situation
             if (isCheckmate(chessBoard, chessBoard.getKing(player).getPosition().getX(), chessBoard.getKing(player).getPosition().getY(), player)) {
                 chessBoard.getGameManagement().setCheckmate(true);
@@ -100,6 +103,7 @@ public class GameLogic {
     private boolean isOneKingStalemate(ChessBoardGameInterface chessBoard, Piece king, TeamColor teamColor) {
         int nbPiece = 0;
         boolean stalemate = true;
+        //Count the number of resting pieces
         for (int y = 0; y < ChessBoard.boardSize; y++) {
             for (int x = 0; x < ChessBoard.boardSize; x++) {
                 if (chessBoard.getBoardPosition(x, y) == teamColor) {
@@ -107,6 +111,7 @@ public class GameLogic {
                 }
             }
         }
+        //If the king is alone
         if (nbPiece == 1) {
             for (int y = king.getPosition().getY() - 1; y <= king.getPosition().getY() + 1; y++) {
                 for (int x = king.getPosition().getX() - 1; x <= king.getPosition().getX() + 1; x++) {
@@ -141,150 +146,184 @@ public class GameLogic {
         return false;
     }
 
-    //TODO make this method returning a Piece list of add this list of the game management
-    private void findAllCheckPieces(ChessBoardGameInterface chessBoard, int xPos, int yPos, TeamColor teamColor) {
-        int y;
-        int x;
+    /**
+     * Return this list of all pieces which create a check situation
+     * @param chessBoard ChessBoard
+     * @param position Position
+     * @param teamColor TeamColor
+     * @return PieceInterface[]
+     */
+    private List<PieceInterface> findAllCheckPieces(ChessBoardGameInterface chessBoard, Position position, TeamColor teamColor) {
+        int xPos = position.getX();
+        int yPos = position.getY();
+        List<PieceInterface> checkPieces = new ArrayList<>();
         TeamColor enemyType = getEnemyTeamColor(teamColor);
-
-        // Horizontal Left
-        for (x = xPos - 1; x >= 0; x--)
-        {
-            if (chessBoard.getBoardPosition(x, yPos) == teamColor)
+        //Horizontal Left Alignment
+        for (int x = xPos - 1; x >= 0; x--) {
+            //If the first piece on the alignment is ally, there is no check pieces on the alignment
+            if (chessBoard.getBoardPosition(x, yPos) == teamColor) {
                 break;
-            else if (chessBoard.getBoardPosition(x, yPos) == enemyType)
-            {
-                if (chessBoard.getPiece(x, yPos) != null && (chessBoard.getPiece(x, yPos) instanceof Queen || chessBoard.getPiece(x, yPos) instanceof Rook))
-                    chessBoard.getGameManagement().getCheckPieces().add(chessBoard.getPiece(x, yPos));
-                else
-                    break;
             }
-        }
-        // Horizontal Right
-        for (x = xPos + 1; x < ChessBoard.boardSize; x++)
-        {
-            if (chessBoard.getBoardPosition(x, yPos) == teamColor)
-                break;
-            else if (chessBoard.getBoardPosition(x, yPos) == enemyType)
-            {
-                if (chessBoard.getPiece(x, yPos) != null && (chessBoard.getPiece(x, yPos) instanceof Queen || chessBoard.getPiece(x, yPos) instanceof Rook))
-                    chessBoard.getGameManagement().getCheckPieces().add(chessBoard.getPiece(x, yPos));
-                else
-                    break;
-            }
-        }
-        // Vertical Up
-        for (y = yPos - 1; y >= 0; y--)
-        {
-            if (chessBoard.getBoardPosition(xPos, y) == teamColor)
-                break;
-            else if (chessBoard.getBoardPosition(xPos, y) == enemyType)
-            {
-                if (chessBoard.getPiece(xPos, y) != null && (chessBoard.getPiece(xPos, y) instanceof Queen || chessBoard.getPiece(xPos, y) instanceof Rook))
-                    chessBoard.getGameManagement().getCheckPieces().add(chessBoard.getPiece(xPos, y));
-                else
-                    break;
-            }
-        }
-        // Vertical Down
-        for (y = yPos + 1; y < ChessBoard.boardSize; y++)
-        {
-            if (chessBoard.getBoardPosition(xPos, y) == teamColor)
-                break;
-            else if (chessBoard.getBoardPosition(xPos, y) == enemyType)
-            {
-                if (chessBoard.getPiece(xPos, y) != null && (chessBoard.getPiece(xPos, y) instanceof Queen || chessBoard.getPiece(xPos, y) instanceof Rook))
-                    chessBoard.getGameManagement().getCheckPieces().add(chessBoard.getPiece(xPos, y));
-                else
-                    break;
-            }
-        }
-        // Diagonal 1 \ Up
-        for (y = yPos - 1, x = xPos - 1; y >= 0 && x >= 0; y--, x--)
-        {
-            if (chessBoard.getBoardPosition(x, y) == teamColor)
-                break;
-            else if (chessBoard.getBoardPosition(x, y) == enemyType)
-            {
-                if (y == yPos - 1 && chessBoard.getBoardPosition(x, y) != null && chessBoard.getPiece(x, y) != null && (teamColor == TeamColor.White && chessBoard.getPiece(x, y) instanceof Pawn))
-                    chessBoard.getGameManagement().getCheckPieces().add(chessBoard.getPiece(x, y));
-                else if (chessBoard.getBoardPosition(x, y) != null && chessBoard.getPiece(x, y) != null && (chessBoard.getPiece(x, y) instanceof Queen || chessBoard.getPiece(x, y) instanceof Bishop))
-                    chessBoard.getGameManagement().getCheckPieces().add(chessBoard.getPiece(x, y));
-                else
-                    break;
-            }
-        }
-        // Diagonal 1 \ Down
-        for (y = yPos + 1, x = xPos + 1; y < ChessBoard.boardSize && x < ChessBoard.boardSize; y++, x++)
-        {
-            if (chessBoard.getBoardPosition(x, y) == teamColor)
-                break;
-            else if (chessBoard.getBoardPosition(x, y) == enemyType)
-            {
-                if (y == yPos + 1 && chessBoard.getBoardPosition(x, y) != null && chessBoard.getPiece(x, y) != null && (teamColor == TeamColor.Black && chessBoard.getPiece(x, y) instanceof Pawn))
-                    chessBoard.getGameManagement().getCheckPieces().add(chessBoard.getPiece(x, y));
-                else if (chessBoard.getBoardPosition(x, y) != null && chessBoard.getPiece(x, y) != null && (chessBoard.getPiece(x, y) instanceof Queen || chessBoard.getPiece(x, y) instanceof Bishop))
-                    chessBoard.getGameManagement().getCheckPieces().add(chessBoard.getPiece(x, y));
-                else
-                    break;
-            }
-        }
-        // Diagonal 2 / Up
-        for (y = yPos - 1, x = xPos + 1; y >= 0 && x < ChessBoard.boardSize; y--, x++)
-        {
-            if (chessBoard.getBoardPosition(x, y) == teamColor)
-                break;
-            else if (chessBoard.getBoardPosition(x, y) == enemyType)
-            {
-                if (y == yPos - 1 && chessBoard.getBoardPosition(x, y) != null && chessBoard.getPiece(x, y) != null && (teamColor == TeamColor.White && chessBoard.getPiece(x, y) instanceof Pawn))
-                    chessBoard.getGameManagement().getCheckPieces().add(chessBoard.getPiece(x, y));
-                else if (chessBoard.getBoardPosition(x, y) != null && chessBoard.getPiece(x, y) != null && (chessBoard.getPiece(x, y) instanceof Queen || chessBoard.getPiece(x, y) instanceof Bishop))
-                    chessBoard.getGameManagement().getCheckPieces().add(chessBoard.getPiece(x, y));
-                else
-                    break;
-            }
-        }
-        // Diagonal 2 / Down
-        for (y = yPos + 1, x = xPos - 1; y < ChessBoard.boardSize && x >= 0; y++, x--)
-        {
-            if (chessBoard.getBoardPosition(x, y) == teamColor)
-                break;
-            else if (chessBoard.getBoardPosition(x, y) == enemyType)
-            {
-                if (y == yPos + 1 && chessBoard.getBoardPosition(x, y) != null && chessBoard.getPiece(x, y) != null && (teamColor == TeamColor.Black && chessBoard.getPiece(x, y) instanceof Pawn))
-                    chessBoard.getGameManagement().getCheckPieces().add(chessBoard.getPiece(x, y));
-                if (chessBoard.getBoardPosition(x, y) != null && (chessBoard.getPiece(x, y) instanceof Queen || chessBoard.getPiece(x, y) instanceof Bishop))
-                    chessBoard.getGameManagement().getCheckPieces().add(chessBoard.getPiece(x, y));
-                else
-                    break;
-            }
-        }
-        // Knight
-        for (y = -2; y <= 2; y++)
-        {
-            if (y != 0)
-            {
-                x = y % 2 == 0 ? 1 : 2;
-                if (yPos + y >= 0 && yPos + y < ChessBoard.boardSize && xPos - x >= 0 && xPos - x < ChessBoard.boardSize && chessBoard.getBoardPosition(xPos - x, yPos + y) != teamColor && chessBoard.getBoardPosition(xPos - x, yPos + y) != null)
-                {
-                    if (chessBoard.getPiece(xPos - x, yPos + y) != null && chessBoard.getPiece(xPos - x, yPos + y) instanceof Knight)
-                        chessBoard.getGameManagement().getCheckPieces().add(chessBoard.getPiece(xPos - x, yPos + y));
+            //If the piece on the alignment is enemy
+            else if (chessBoard.getBoardPosition(x, yPos) == enemyType) {
+                //If its a Rook or a Queen
+                if (chessBoard.getPiece(x, yPos) != null && (chessBoard.getPiece(x, yPos) instanceof Queen || chessBoard.getPiece(x, yPos) instanceof Rook)) {
+                    checkPieces.add(chessBoard.getPiece(x, yPos));
                 }
-                if (yPos + y >= 0 && yPos + y < ChessBoard.boardSize && xPos + x >= 0 && xPos + x < ChessBoard.boardSize && chessBoard.getBoardPosition(xPos + x, yPos + y) != teamColor && chessBoard.getBoardPosition(xPos + x, yPos + y) != null)
-                {
-                    if (chessBoard.getPiece(xPos + x, yPos + y) != null && chessBoard.getPiece(xPos + x, yPos + y) instanceof Knight)
-                        chessBoard.getGameManagement().getCheckPieces().add(chessBoard.getPiece(xPos + x, yPos + y));
+                break;
+            }
+        }
+        //Horizontal Right Alignment
+        for (int x = xPos + 1; x < ChessBoard.boardSize; x++) {
+            //If the first piece on the alignment is ally, there is no check pieces on the alignment
+            if (chessBoard.getBoardPosition(x, yPos) == teamColor) {
+                break;
+            }
+            //If the piece on the alignment is enemy
+            else if (chessBoard.getBoardPosition(x, yPos) == enemyType) {
+                //If its a Rook or a Queen
+                if (chessBoard.getPiece(x, yPos) != null && (chessBoard.getPiece(x, yPos) instanceof Queen || chessBoard.getPiece(x, yPos) instanceof Rook)) {
+                    checkPieces.add(chessBoard.getPiece(x, yPos));
+                }
+                break;
+            }
+        }
+        //Vertical Up Alignment
+        for (int y = yPos - 1; y >= 0; y--) {
+            //If the first piece on the alignment is ally, there is no check pieces on the alignment
+            if (chessBoard.getBoardPosition(xPos, y) == teamColor) {
+                break;
+            }
+            //If the piece on the alignment is enemy
+            else if (chessBoard.getBoardPosition(xPos, y) == enemyType) {
+                //If its a Rook or a Queen
+                if (chessBoard.getPiece(xPos, y) != null && (chessBoard.getPiece(xPos, y) instanceof Queen || chessBoard.getPiece(xPos, y) instanceof Rook)) {
+                    checkPieces.add(chessBoard.getPiece(xPos, y));
+                }
+                break;
+            }
+        }
+        //Vertical Down Alignment
+        for (int y = yPos + 1; y < ChessBoard.boardSize; y++) {
+            //If the first piece on the alignment is ally, there is no check pieces on the alignment
+            if (chessBoard.getBoardPosition(xPos, y) == teamColor) {
+                break;
+            }
+            //If the piece on the alignment is enemy
+            else if (chessBoard.getBoardPosition(xPos, y) == enemyType) {
+                //If its a Rook or a Queen
+                if (chessBoard.getPiece(xPos, y) != null && (chessBoard.getPiece(xPos, y) instanceof Queen || chessBoard.getPiece(xPos, y) instanceof Rook)) {
+                    checkPieces.add(chessBoard.getPiece(xPos, y));
+                }
+                break;
+            }
+        }
+        //Diagonal Left Up Alignment
+        for (int y = yPos - 1, x = xPos - 1; y >= 0 && x >= 0; y--, x--) {
+            //If the first piece on the alignment is ally, there is no check pieces on the alignment
+            if (chessBoard.getBoardPosition(x, y) == teamColor) {
+                break;
+            }
+            //If the piece on the alignment is enemy
+            else if (chessBoard.getBoardPosition(x, y) == enemyType) {
+                //If its a Pawn and its next to the piece
+                if (y == yPos - 1 && chessBoard.getBoardPosition(x, y) != null && chessBoard.getPiece(x, y) != null && (teamColor == TeamColor.White && chessBoard.getPiece(x, y) instanceof Pawn)) {
+                    checkPieces.add(chessBoard.getPiece(x, y));
+                }
+                //If its a Queen or a Bishop
+                else if (chessBoard.getBoardPosition(x, y) != null && chessBoard.getPiece(x, y) != null && (chessBoard.getPiece(x, y) instanceof Queen || chessBoard.getPiece(x, y) instanceof Bishop)) {
+                    checkPieces.add(chessBoard.getPiece(x, y));
+                }
+                break;
+            }
+        }
+        //Diagonal Down Right Alignment
+        for (int y = yPos + 1, x = xPos + 1; y < ChessBoard.boardSize && x < ChessBoard.boardSize; y++, x++) {
+            //If the first piece on the alignment is ally, there is no check pieces on the alignment
+            if (chessBoard.getBoardPosition(x, y) == teamColor) {
+                break;
+            }
+            else if (chessBoard.getBoardPosition(x, y) == enemyType) {
+                //If its a Pawn and its next to the piece
+                if (y == yPos + 1 && chessBoard.getBoardPosition(x, y) != null && chessBoard.getPiece(x, y) != null && (teamColor == TeamColor.Black && chessBoard.getPiece(x, y) instanceof Pawn)) {
+                    checkPieces.add(chessBoard.getPiece(x, y));
+                }
+                //If its a Queen or a Bishop
+                else if (chessBoard.getBoardPosition(x, y) != null && chessBoard.getPiece(x, y) != null && (chessBoard.getPiece(x, y) instanceof Queen || chessBoard.getPiece(x, y) instanceof Bishop)) {
+                    checkPieces.add(chessBoard.getPiece(x, y));
+                }
+                break;
+            }
+        }
+        //Diagonal Up Right Alignment
+        for (int y = yPos - 1, x = xPos + 1; y >= 0 && x < ChessBoard.boardSize; y--, x++) {
+            //If the first piece on the alignment is ally, there is no check pieces on the alignment
+            if (chessBoard.getBoardPosition(x, y) == teamColor) {
+                break;
+            }
+            //If the piece on the alignment is enemy
+            else if (chessBoard.getBoardPosition(x, y) == enemyType) {
+                //If its a Pawn and its next to the piece
+                if (y == yPos - 1 && chessBoard.getBoardPosition(x, y) != null && chessBoard.getPiece(x, y) != null && (teamColor == TeamColor.White && chessBoard.getPiece(x, y) instanceof Pawn)) {
+                    checkPieces.add(chessBoard.getPiece(x, y));
+                }
+                //If its a Queen or a Bishop
+                else if (chessBoard.getBoardPosition(x, y) != null && chessBoard.getPiece(x, y) != null && (chessBoard.getPiece(x, y) instanceof Queen || chessBoard.getPiece(x, y) instanceof Bishop)) {
+                    checkPieces.add(chessBoard.getPiece(x, y));
+                }
+                break;
+            }
+        }
+        //Diagonal Down Right Alignment
+        for (int y = yPos + 1, x = xPos - 1; y < ChessBoard.boardSize && x >= 0; y++, x--) {
+            //If the first piece on the alignment is ally, there is no check pieces on the alignment
+            if (chessBoard.getBoardPosition(x, y) == teamColor) {
+                break;
+            }
+            //If the piece on the alignment is enemy
+            else if (chessBoard.getBoardPosition(x, y) == enemyType) {
+                //If its a Pawn and its next to the piece
+                if (y == yPos + 1 && chessBoard.getBoardPosition(x, y) != null && chessBoard.getPiece(x, y) != null && (teamColor == TeamColor.Black && chessBoard.getPiece(x, y) instanceof Pawn)) {
+                    checkPieces.add(chessBoard.getPiece(x, y));
+                }
+                //If its a Queen or a Bishop
+                if (chessBoard.getBoardPosition(x, y) != null && (chessBoard.getPiece(x, y) instanceof Queen || chessBoard.getPiece(x, y) instanceof Bishop)) {
+                    checkPieces.add(chessBoard.getPiece(x, y));
+                }
+                break;
+            }
+        }
+        //Knight Alignment
+        for (int y = -2; y <= 2; y++) {
+            if (y != 0) {
+                int x = y % 2 == 0 ? 1 : 2;
+                if (yPos + y >= 0 && yPos + y < ChessBoard.boardSize && xPos - x >= 0 && xPos - x < ChessBoard.boardSize && chessBoard.getBoardPosition(xPos - x, yPos + y) != teamColor && chessBoard.getBoardPosition(xPos - x, yPos + y) != null) {
+                    if (chessBoard.getPiece(xPos - x, yPos + y) != null && chessBoard.getPiece(xPos - x, yPos + y) instanceof Knight) {
+                        checkPieces.add(chessBoard.getPiece(xPos - x, yPos + y));
+                    }
+                }
+                if (yPos + y >= 0 && yPos + y < ChessBoard.boardSize && xPos + x >= 0 && xPos + x < ChessBoard.boardSize && chessBoard.getBoardPosition(xPos + x, yPos + y) != teamColor && chessBoard.getBoardPosition(xPos + x, yPos + y) != null) {
+                    if (chessBoard.getPiece(xPos + x, yPos + y) != null && chessBoard.getPiece(xPos + x, yPos + y) instanceof Knight) {
+                        checkPieces.add(chessBoard.getPiece(xPos + x, yPos + y));
+                    }
                 }
             }
         }
+        return checkPieces;
     }
 
+    /**
+     * Return true if the player is in a Checkmate situation
+     * @param chessBoard ChessBoard
+     * @param xPos int
+     * @param yPos int
+     * @param teamColor TeamColor
+     * @return boolean
+     */
     private boolean isCheckmate(ChessBoardGameInterface chessBoard, int xPos, int yPos, TeamColor teamColor) {
         boolean checkmate = true;
-        int x;
-        int y;
-        for (y = yPos - 1; y <= yPos + 1; y++) {
-            for (x = xPos - 1; x <= xPos + 1; x++) {
+        for (int y = yPos - 1; y <= yPos + 1; y++) {
+            for (int x = xPos - 1; x <= xPos + 1; x++) {
                 if(pieceInCenterAndNextToEnemyAndNotInCheck(chessBoard, x, y, teamColor)) {
                     checkmate = false;
                     break;
@@ -293,27 +332,23 @@ public class GameLogic {
             if (!checkmate)
                 break;
         }
-        if (chessBoard.getGameManagement().getCheckPieces().size() < 2)
-        {
+        if (chessBoard.getGameManagement().getCheckPieces().size() < 2) {
             PieceInterface checkPiece = chessBoard.getGameManagement().getCheckPieces().get(0);
             canCapture(chessBoard, checkPiece);
             canProtect(chessBoard, xPos, yPos, teamColor, checkPiece);
-            if (!chessBoard.getGameManagement().getSaviorPieces().isEmpty())
-            {
-                for(Iterator<PieceInterface> piece = chessBoard.getGameManagement().getSaviorPieces().iterator(); piece.hasNext(); )
-                {
+            if (!chessBoard.getGameManagement().getSaviorPieces().isEmpty()) {
+                for(Iterator<PieceInterface> piece = chessBoard.getGameManagement().getSaviorPieces().iterator(); piece.hasNext(); ) {
                     PieceInterface item = piece.next();
                     item.setSavior(true);
-                    if (MovementRules.verticalProtection(chessBoard, item.getPosition().getX(), item.getPosition().getY(), item.getTeamColor()) || MovementRules.horizontalProtection(chessBoard, item.getPosition().getX(), item.getPosition().getY(), item.getTeamColor()) ||
-                            MovementRules.slashDiagonalProtection(chessBoard, item.getPosition().getX(), item.getPosition().getY(), item.getTeamColor()) || MovementRules.backslashDiagonalProtection(chessBoard, item.getPosition().getX(), item.getPosition().getY(), item.getTeamColor()))
-                    {
+                    if (MovementRules.verticalProtection(chessBoard, item.getPosition().getX(), item.getPosition().getY(), item.getTeamColor()) || MovementRules.horizontalProtection(chessBoard, item.getPosition().getX(), item.getPosition().getY(), item.getTeamColor()) || MovementRules.slashDiagonalProtection(chessBoard, item.getPosition().getX(), item.getPosition().getY(), item.getTeamColor()) || MovementRules.backslashDiagonalProtection(chessBoard, item.getPosition().getX(), item.getPosition().getY(), item.getTeamColor())) {
                         item.setSavior(false);
                         piece.remove();
                     }
                 }
             }
-            if (!chessBoard.getGameManagement().getSaviorPieces().isEmpty())
+            if (!chessBoard.getGameManagement().getSaviorPieces().isEmpty()) {
                 checkmate = false;
+            }
         }
         return (checkmate);
     }
@@ -360,6 +395,7 @@ public class GameLogic {
                 findAllSaviorPieces(chessboard, x, y, checkPiece.getTeamColor(), true);
     }
 
+    //TODO Return Piece List
     private void findAllSaviorPieces(ChessBoardGameInterface chessBoard, int xPos, int yPos, TeamColor teamColor, boolean protect) {
         int y;
         int x;
