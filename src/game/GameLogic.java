@@ -429,7 +429,15 @@ public class GameLogic {
         chessboard.getGameManagement().getSaviorPieces().addAll(saviorPieces);
     }
 
-    //TODO Comment
+    /**
+     * Return all Pieces that can save for a check situation by placing them between the king and the check piece
+     * @param chessBoard ChessBoardGameInterface
+     * @param xPos int
+     * @param yPos int
+     * @param teamColor TeamColor
+     * @param protect boolean
+     * @return PieceInterface[]
+     */
     private List<PieceInterface> findAllSaviorPieces(ChessBoardGameInterface chessBoard, int xPos, int yPos, TeamColor teamColor, boolean protect) {
         List<PieceInterface> saviorPieces =  new ArrayList<>();
         TeamColor enemyType = getEnemyTeamColor(teamColor);
@@ -587,14 +595,22 @@ public class GameLogic {
         return saviorPieces;
     }
 
-    //TODO Comment
-    //TODO Check this method
+    /**
+     * Find all piece that can capture the check piece and store them in the GameManagement
+     * TODO Check this method
+     * @param chessboard ChessBoardGameInterface
+     * @param checkPiece PieceInterface
+     */
     private void canCapture(ChessBoardGameInterface chessboard, PieceInterface checkPiece) {
         chessboard.getGameManagement().getSaviorPieces().addAll(findAllSaviorPieces(chessboard, checkPiece.getPosition().getX(), checkPiece.getPosition().getY(), checkPiece.getTeamColor(), false));
     }
 
-    //TODO Comment
-    //TODO Reform implementation
+    /**
+     * Return true is where in a stalemate situation
+     * TODO Reform implementation
+     * @param chessBoard ChessBoardGameInterface
+     * @return boolean
+     */
     private boolean isLimitPieceStalemate(ChessBoardGameInterface chessBoard) {
         if (piecesCount(chessBoard, Queen.class, TeamColor.White) != 0 || piecesCount(chessBoard, Queen.class, TeamColor.Black) != 0)
             return (false);
@@ -610,7 +626,13 @@ public class GameLogic {
         else return piecesCount(chessBoard, Pawn.class, TeamColor.White) <= 1 && piecesCount(chessBoard, Pawn.class, TeamColor.White) <= 1;
     }
 
-    //TODO Comment
+    /**
+     * Return the number of Piece of a specific class resting on the board
+     * @param chessBoard ChessBoardGameInterface
+     * @param pieceClass Class
+     * @param teamColor TeamColor
+     * @return int
+     */
     private int piecesCount(ChessBoardGameInterface chessBoard, Class pieceClass, TeamColor teamColor) {
         int count = 0;
         for(int x = 0 ; x < ChessBoard.boardSize ; x++) {
