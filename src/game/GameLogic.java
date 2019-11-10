@@ -98,7 +98,7 @@ public class GameLogic {
             item.getSaviorPositions().clear();
         }
         //If the player is in a check situation
-        if (MovementRules.isCheck(chessBoard, chessBoard.getKing(player).getPosition().getX(), chessBoard.getKing(player).getPosition().getY(), player, true)) {
+        if (MovementRules.isCheck(chessBoard, chessBoard.getKing(player).getPosition(), player)) {
             chessBoard.getGameManagement().getCheckPieces().clear();
             chessBoard.getGameManagement().getSaviorPieces().clear();
             chessBoard.getGameManagement().setCheckState(true);
@@ -184,7 +184,7 @@ public class GameLogic {
      */
     private boolean pieceInCenterAndNextToEnemyAndNotInCheck(ChessBoardGameInterface chessBoard, int x, int y, TeamColor teamColor) {
         if(y >= 0 && y < ChessBoard.boardSize && x >= 0 && x < ChessBoard.boardSize && chessBoard.getBoardPosition(x, y) != teamColor) {
-            return !MovementRules.isCheck(chessBoard, x, y, teamColor, true);
+            return !MovementRules.isCheck(chessBoard, x, y, teamColor);
         }
         return false;
     }
@@ -474,6 +474,12 @@ public class GameLogic {
     private List<PieceInterface> findAllSaviorPieces(ChessBoardGameInterface chessBoard, int xPos, int yPos, TeamColor enemyPlayer, boolean protect) {
         List<PieceInterface> saviorPieces =  new ArrayList<>();
         TeamColor player = getEnemyTeamColor(enemyPlayer);
+        //If the King can capture the check piece and is not is an other check situation
+        if(Math.abs(chessBoard.getKing(player).getPosition().getX() - xPos) <= 1
+                && Math.abs(chessBoard.getKing(player).getPosition().getY() - yPos) <= 1
+                && !MovementRules.isCheck(chessBoard, xPos, yPos, player)) {
+            saviorPieces.add(chessBoard.getKing(player));
+        }
         //Horizontal Left Alignment
         for(int x = xPos - 1; x >= 0; x--) {
             if (chessBoard.getBoardPosition(x, yPos) == enemyPlayer) {

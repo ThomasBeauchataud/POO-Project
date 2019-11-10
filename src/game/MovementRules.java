@@ -5,7 +5,7 @@ import pieces.*;
 
 import static game.GameLogic.getEnemyTeamColor;
 
-@SuppressWarnings("Duplicates")
+@SuppressWarnings({"Duplicates", "WeakerAccess"})
 public class MovementRules {
 
 	/**
@@ -277,13 +277,23 @@ public class MovementRules {
 	/**
 	 * Method to check a Check situation
 	 * @param chessBoard ChessBoard
+	 * @param position Position, the King Position
+	 * @param teamColor TeamColor
+	 * @return boolean
+	 */
+	public static boolean isCheck(ChessBoardGameInterface chessBoard, Position position, TeamColor teamColor) {
+		return isCheck(chessBoard, position.getX(), position.getY(), teamColor);
+	}
+
+	/**
+	 * Method to check a Check situation
+	 * @param chessBoard ChessBoard
 	 * @param xPos int
 	 * @param yPos int
 	 * @param teamColor TeamColor
-	 * @param kingCanCapture boolean, true if the King can capture the Piece that create a Check situation
 	 * @return boolean
 	 */
-	public static boolean isCheck(ChessBoardGameInterface chessBoard, int xPos, int yPos, TeamColor teamColor, boolean kingCanCapture) {
+	public static boolean isCheck(ChessBoardGameInterface chessBoard, int xPos, int yPos, TeamColor teamColor) {
 		int y;
 		int x;
 		TeamColor enemyType = getEnemyTeamColor(teamColor);
@@ -293,7 +303,7 @@ public class MovementRules {
 				break;
 			else if (chessBoard.getBoardPosition(x, yPos) == enemyType)
 			{
-				if (x == xPos - 1 && chessBoard.getPiece(x, yPos) != null && kingCanCapture && chessBoard.getPiece(x, yPos) instanceof King)
+				if (x == xPos - 1 && chessBoard.getPiece(x, yPos) != null && chessBoard.getPiece(x, yPos) instanceof King)
 					return (true);
 				else if (chessBoard.getPiece(x, yPos) != null && (chessBoard.getPiece(x, yPos) instanceof Queen || chessBoard.getPiece(x, yPos) instanceof Rook))
 					return (true);
@@ -307,7 +317,7 @@ public class MovementRules {
 				break;
 			else if (chessBoard.getBoardPosition(x, yPos) == enemyType)
 			{
-				if (x == xPos + 1 && chessBoard.getPiece(x, yPos) != null && kingCanCapture && chessBoard.getPiece(x, yPos) instanceof King)
+				if (x == xPos + 1 && chessBoard.getPiece(x, yPos) != null && chessBoard.getPiece(x, yPos) instanceof King)
 					return (true);
 				else if (chessBoard.getPiece(x, yPos) != null && (chessBoard.getPiece(x, yPos) instanceof Queen || chessBoard.getPiece(x, yPos) instanceof Rook))
 					return (true);
@@ -322,7 +332,7 @@ public class MovementRules {
 				break;
 			else if (chessBoard.getBoardPosition(xPos, y) == enemyType)
 			{
-				if (y == yPos - 1 && chessBoard.getPiece(xPos, y) != null && kingCanCapture && chessBoard.getPiece(xPos, y) instanceof King)
+				if (y == yPos - 1 && chessBoard.getPiece(xPos, y) != null && chessBoard.getPiece(xPos, y) instanceof King)
 					return (true);
 				else if (chessBoard.getPiece(xPos, y) != null && (chessBoard.getPiece(xPos, y) instanceof Queen || chessBoard.getPiece(xPos, y) instanceof Rook))
 					return (true);
@@ -337,7 +347,7 @@ public class MovementRules {
 				break;
 			else if (chessBoard.getBoardPosition(xPos, y) == enemyType)
 			{
-				if (y == yPos + 1 && chessBoard.getPiece(xPos, y) != null && kingCanCapture && chessBoard.getPiece(xPos, y) instanceof King)
+				if (y == yPos + 1 && chessBoard.getPiece(xPos, y) != null && chessBoard.getPiece(xPos, y) instanceof King)
 					return (true);
 				else if (chessBoard.getPiece(xPos, y) != null && (chessBoard.getPiece(xPos, y) instanceof Queen || chessBoard.getPiece(xPos, y) instanceof Rook))
 					return (true);
@@ -352,7 +362,7 @@ public class MovementRules {
 				break;
 			else if (chessBoard.getBoardPosition(x, y) == enemyType)
 			{
-				if (y == yPos - 1 && chessBoard.getBoardPosition(x, y) != null && chessBoard.getPiece(x, y) != null && ((kingCanCapture && chessBoard.getPiece(x, y) instanceof King) || (teamColor == TeamColor.White && chessBoard.getPiece(x, y) instanceof Pawn)))
+				if (y == yPos - 1 && chessBoard.getBoardPosition(x, y) != null && chessBoard.getPiece(x, y) != null && ((chessBoard.getPiece(x, y) instanceof King) || (teamColor == TeamColor.White && chessBoard.getPiece(x, y) instanceof Pawn)))
 					return (true);
 				else if (chessBoard.getBoardPosition(x, y) != null && chessBoard.getPiece(x, y) != null && (chessBoard.getPiece(x, y) instanceof Queen || chessBoard.getPiece(x, y) instanceof Bishop))
 					return (true);
@@ -367,7 +377,7 @@ public class MovementRules {
 				break;
 			else if (chessBoard.getBoardPosition(x, y) == enemyType)
 			{
-				if (y == yPos + 1 && chessBoard.getBoardPosition(x, y) != null && chessBoard.getPiece(x, y) != null && ((kingCanCapture && chessBoard.getPiece(x, y) instanceof King) || (teamColor == TeamColor.Black && chessBoard.getPiece(x, y) instanceof Pawn)))
+				if (y == yPos + 1 && chessBoard.getBoardPosition(x, y) != null && chessBoard.getPiece(x, y) != null && ((chessBoard.getPiece(x, y) instanceof King) || (teamColor == TeamColor.Black && chessBoard.getPiece(x, y) instanceof Pawn)))
 					return (true);
 				else if (chessBoard.getBoardPosition(x, y) != null && chessBoard.getPiece(x, y) != null && (chessBoard.getPiece(x, y) instanceof Queen || chessBoard.getPiece(x, y) instanceof Bishop))
 					return (true);
@@ -382,7 +392,7 @@ public class MovementRules {
 				break;
 			else if (chessBoard.getBoardPosition(x, y) == enemyType)
 			{
-				if (y == yPos - 1 && chessBoard.getBoardPosition(x, y) != null && chessBoard.getPiece(x, y) != null && ((kingCanCapture && chessBoard.getPiece(x, y) instanceof King) || (teamColor == TeamColor.White && chessBoard.getPiece(x, y) instanceof Pawn)))
+				if (y == yPos - 1 && chessBoard.getBoardPosition(x, y) != null && chessBoard.getPiece(x, y) != null && ((chessBoard.getPiece(x, y) instanceof King) || (teamColor == TeamColor.White && chessBoard.getPiece(x, y) instanceof Pawn)))
 					return (true);
 				else if (chessBoard.getBoardPosition(x, y) != null && chessBoard.getPiece(x, y) != null && (chessBoard.getPiece(x, y) instanceof Queen || chessBoard.getPiece(x, y) instanceof Bishop))
 					return (true);
@@ -397,7 +407,7 @@ public class MovementRules {
 				break;
 			else if (chessBoard.getBoardPosition(x, y) == enemyType)
 			{
-				if (y == yPos + 1 && chessBoard.getBoardPosition(x, y) != null && chessBoard.getPiece(x, y) != null && ((kingCanCapture && chessBoard.getPiece(x, y) instanceof King) || (teamColor == TeamColor.Black && chessBoard.getPiece(x, y) instanceof Pawn)))
+				if (y == yPos + 1 && chessBoard.getBoardPosition(x, y) != null && chessBoard.getPiece(x, y) != null && ((chessBoard.getPiece(x, y) instanceof King) || (teamColor == TeamColor.Black && chessBoard.getPiece(x, y) instanceof Pawn)))
 					return (true);
 				else if (chessBoard.getBoardPosition(x, y) != null && (chessBoard.getPiece(x, y) instanceof Queen || chessBoard.getPiece(x, y) instanceof Bishop))
 					return (true);

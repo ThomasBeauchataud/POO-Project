@@ -70,43 +70,42 @@ public abstract class Piece extends LayoutEntity implements PieceInterface {
     public void move(ChessBoardPieceInterface chessBoard, int x, int y) {
         chessBoard.setPiece(this.position.getX(), this.position.getY(), null);
         if (!chessBoard.getGameManagement().isCheckState() && this instanceof King) {
-            if (((King)this).canCastle(chessBoard) == Castle.ShortBlack) {
+            if (((King) this).canCastle(chessBoard) == Castle.ShortBlack) {
                 chessBoard.setPiece(x - 1, y, this);
                 this.position.setX(x - 1);
                 chessBoard.setPiece(5, y, chessBoard.getPiece(7, y));
                 chessBoard.getPiece(7, y).getPosition().setX(7);
                 chessBoard.setPiece(7, y, null);
             }
-            if (((King)this).canCastle(chessBoard) == Castle.LongBlack) {
+            if (((King) this).canCastle(chessBoard) == Castle.LongBlack) {
                 chessBoard.setPiece(x + 2, y, this);
                 this.position.setX(x + 2);
                 chessBoard.setPiece(3, y, chessBoard.getPiece(0, y));
                 chessBoard.getPiece(3, y).getPosition().setX(3);
                 chessBoard.setPiece(0, y, null);
             }
-            if (((King)this).canCastle(chessBoard) == Castle.ShortWhite) {
+            if (((King) this).canCastle(chessBoard) == Castle.ShortWhite) {
                 chessBoard.setPiece(x - 1, y, this);
                 this.position.setX(x - 1);
                 chessBoard.setPiece(5, y, chessBoard.getPiece(7, y));
                 chessBoard.getPiece(5, y).getPosition().setX(5);
                 chessBoard.setPiece(7, y, null);
             }
-            if (((King)this).canCastle(chessBoard) == Castle.LongWhite) {
+            if (((King) this).canCastle(chessBoard) == Castle.LongWhite) {
                 chessBoard.setPiece(x + 2, y, this);
                 this.position.setX(x + 2);
                 chessBoard.setPiece(3, y, chessBoard.getPiece(0, y));
                 chessBoard.getPiece(3, y).getPosition().setX(3);
                 chessBoard.setPiece(0, y, null);
             }
-        } else {
-            this.position.setX(x);
-            this.position.setY(y);
-            if (chessBoard.getPiece(x, y) != null)
-                chessBoard.getPiece(x, y).capture(chessBoard);
-            chessBoard.setPiece(x, y, this);
-            if (this instanceof Pawn && ((this.teamColor == TeamColor.White && this.position.getY() == 0) || (this.teamColor == TeamColor.Black && this.position.getY() == 7))) {
-                chessBoard.createPromotePiece(this);
-            }
+        }
+        this.position.setX(x);
+        this.position.setY(y);
+        if (chessBoard.getPiece(x, y) != null)
+            chessBoard.getPiece(x, y).capture(chessBoard);
+        chessBoard.setPiece(x, y, this);
+        if (this instanceof Pawn && ((this.teamColor == TeamColor.White && this.position.getY() == 0) || (this.teamColor == TeamColor.Black && this.position.getY() == 7))) {
+            chessBoard.createPromotePiece(this);
         }
         firstTime = false;
     }

@@ -27,7 +27,7 @@ public class King extends Piece {
 					if (!chessBoard.getGameManagement().isCheckState()) {
 						this.canCastle(chessBoard);
 					}
-					if (!MovementRules.isCheck(chessBoard, x, y, this.getTeamColor(), true)) {
+					if (!MovementRules.isCheck(chessBoard, x, y, this.getTeamColor())) {
 						positions.add(new Position(x, y));
 					}
 				}
