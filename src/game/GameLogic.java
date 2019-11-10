@@ -12,7 +12,6 @@ import java.util.List;
 
 /**
  * Game Logic Management
- * TODO Add the possibility that the king eat a check piece
  */
 @Aspect
 @SuppressWarnings({"Duplicates","unchecked"})
@@ -464,9 +463,10 @@ public class GameLogic {
 
     /**
      * Return all Pieces that can save for a check situation by placing them between the king and the check piece
+     * TODO Add the possibility that the king eat a check piece
      * @param chessBoard ChessBoardGameInterface
-     * @param xPos int
-     * @param yPos int
+     * @param xPos int, the x coordinate of the piece creating a check situation
+     * @param yPos int, the y coordinate of the piece creating a check situation
      * @param enemyPlayer TeamColor
      * @param protect boolean, false we are looking for capture and not for protection
      * @return PieceInterface[]

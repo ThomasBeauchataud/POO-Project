@@ -5,7 +5,6 @@ import pieces.TeamColor;
 /**
  * Manage Game Situation for Timer range
  */
-@SuppressWarnings("BooleanMethodIsAlwaysInverted")
 public interface GameManagementTimerInterface {
 
     /**
