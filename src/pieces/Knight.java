@@ -25,24 +25,10 @@ public class Knight extends Piece {
 			if (y != 0) {
 				x = y % 2 == 0 ? 1 : 2;
 				if (this.getPosition().getY() + y >= 0 && this.getPosition().getY() + y < ChessBoard.boardSize && this.getPosition().getX() - x >= 0 && this.getPosition().getX() - x < ChessBoard.boardSize && chessBoard.getBoardPosition(this.getPosition().getX() - x, this.getPosition().getY() + y) != this.getTeamColor()) {
-					if (chessBoard.getGameManagement().isCheckState()) {
-						if (MovementRules.isThisProtecting(chessBoard, this.getPosition().getX() - x, this.getPosition().getY() + y, this.getTeamColor())) {
-							positions.add(new Position(this.getPosition().getX() - x, this.getPosition().getY() + y));
-						}
-					}
-					else {
-						positions.add(new Position(this.getPosition().getX() - x, this.getPosition().getY() + y));
-					}
+					positions.add(new Position(this.getPosition().getX() - x, this.getPosition().getY() + y));
 				}
 				if (this.getPosition().getY() + y >= 0 && this.getPosition().getY() + y < ChessBoard.boardSize && this.getPosition().getX() + x >= 0 && this.getPosition().getX() + x < ChessBoard.boardSize && chessBoard.getBoardPosition(this.getPosition().getX() + x, this.getPosition().getY() + y) != this.getTeamColor()) {
-					if (chessBoard.getGameManagement().isCheckState()) {
-						if (MovementRules.isThisProtecting(chessBoard, this.getPosition().getX() + x, this.getPosition().getY() + y, this.getTeamColor())) {
-							positions.add(new Position(this.getPosition().getX() + x, this.getPosition().getY() + y));
-						}
-					}
-					else {
-						positions.add(new Position(this.getPosition().getX() + x, this.getPosition().getY() + y));
-					}
+					positions.add(new Position(this.getPosition().getX() + x, this.getPosition().getY() + y));
 				}
 			}
 		}

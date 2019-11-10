@@ -5,7 +5,7 @@ import pieces.*;
 
 import static game.GameLogic.getEnemyTeamColor;
 
-//TODO Optimize all this methods
+@SuppressWarnings("Duplicates")
 public class MovementRules {
 
 	/**
@@ -28,7 +28,7 @@ public class MovementRules {
 	 * @return boolean
 	 */
 	public static boolean verticalProtection(ChessBoardGameInterface chessBoard, int xPos, int yPos, TeamColor teamColor) {
-		int y = 0;
+		int y;
 		TeamColor enemyType;
 		if (teamColor == TeamColor.White)
 			enemyType = TeamColor.Black;
@@ -94,7 +94,7 @@ public class MovementRules {
 	 * @return boolean
 	 */
 	public static boolean horizontalProtection(ChessBoardGameInterface chessBoard, int xPos, int yPos, TeamColor teamColor) {
-		int x = 0;
+		int x;
 		TeamColor enemyType = getEnemyTeamColor(teamColor);
 		// King on the Horizontal Left
 		for (x = xPos - 1; x >= 0; x--) {
@@ -423,59 +423,6 @@ public class MovementRules {
 				}
 			}
 		}
-		return (false);
-	}
-
-	/**
-	 * Method to check a Checkmate situation
-	 * @param chessboard ChessBoard
-	 * @param xPos int
-	 * @param yPos int
-	 * @param teamColor TeamColor
-	 * @return boolean
-	 */
-	public static boolean isThisProtecting(ChessBoardGameInterface chessboard, int xPos, int yPos, TeamColor teamColor) {
-		PieceInterface checkPiece = chessboard.getGameManagement().getCheckPieces().get(0);
-		// Vertical up threat
-		if (chessboard.getKing(teamColor).getPosition().getX() == checkPiece.getPosition().getX() && chessboard.getKing(teamColor).getPosition().getY() > checkPiece.getPosition().getY())
-			if (xPos == chessboard.getKing(teamColor).getPosition().getX() && yPos < chessboard.getKing(teamColor).getPosition().getY() && yPos > checkPiece.getPosition().getY())
-				return (true);
-		// Vertical down threat
-		if (chessboard.getKing(teamColor).getPosition().getX() == checkPiece.getPosition().getX() && chessboard.getKing(teamColor).getPosition().getY() < checkPiece.getPosition().getY())
-			if (xPos == chessboard.getKing(teamColor).getPosition().getX() && yPos > chessboard.getKing(teamColor).getPosition().getY() && yPos < checkPiece.getPosition().getY())
-				return (true);
-		// Horizontal left threat
-		if (chessboard.getKing(teamColor).getPosition().getX() > checkPiece.getPosition().getX() && chessboard.getKing(teamColor).getPosition().getY() == checkPiece.getPosition().getY())
-			if (yPos == chessboard.getKing(teamColor).getPosition().getY() && xPos < chessboard.getKing(teamColor).getPosition().getX() && xPos > checkPiece.getPosition().getX())
-				return (true);
-		// Horizontal right threat
-		if (chessboard.getKing(teamColor).getPosition().getX() < checkPiece.getPosition().getX() && chessboard.getKing(teamColor).getPosition().getY() == checkPiece.getPosition().getY())
-			if (yPos == chessboard.getKing(teamColor).getPosition().getY() && xPos > chessboard.getKing(teamColor).getPosition().getX() && xPos < checkPiece.getPosition().getX())
-				return (true);
-		// Diagonal 1 \ up threat
-		int y = checkPiece.getPosition().getY();
-		if (chessboard.getKing(teamColor).getPosition().getX() > checkPiece.getPosition().getX() && chessboard.getKing(teamColor).getPosition().getY() > checkPiece.getPosition().getY())
-			for (int x = checkPiece.getPosition().getX(); x < chessboard.getKing(teamColor).getPosition().getX() && y < chessboard.getKing(teamColor).getPosition().getY(); x++, y++)
-				if (xPos == x && yPos == y)
-					return (true);
-		// Diagonal 1 \ down threat
-		y = checkPiece.getPosition().getY();
-		if (chessboard.getKing(teamColor).getPosition().getX() < checkPiece.getPosition().getX() && chessboard.getKing(teamColor).getPosition().getY() < checkPiece.getPosition().getY())
-			for (int x = checkPiece.getPosition().getX(); x > chessboard.getKing(teamColor).getPosition().getX() && y > chessboard.getKing(teamColor).getPosition().getY(); x--, y--)
-				if (xPos == x && yPos == y)
-					return (true);
-		// Diagonal 2 / up threat
-		y = checkPiece.getPosition().getY();
-		if (chessboard.getKing(teamColor).getPosition().getX() < checkPiece.getPosition().getX() && chessboard.getKing(teamColor).getPosition().getY() > checkPiece.getPosition().getY())
-			for (int x = checkPiece.getPosition().getX(); x > chessboard.getKing(teamColor).getPosition().getX() && y < chessboard.getKing(teamColor).getPosition().getY(); x--, y++)
-				if (xPos == x && yPos == y)
-					return (true);
-		// Diagonal 2 / down threat
-		y = checkPiece.getPosition().getY();
-		if (chessboard.getKing(teamColor).getPosition().getX() > checkPiece.getPosition().getX() && chessboard.getKing(teamColor).getPosition().getY() < checkPiece.getPosition().getY())
-			for (int x = checkPiece.getPosition().getX(); x < chessboard.getKing(teamColor).getPosition().getX() && y > chessboard.getKing(teamColor).getPosition().getY(); x++, y--)
-				if (xPos == x && yPos == y)
-					return (true);
 		return (false);
 	}
 

@@ -1,7 +1,6 @@
 package pieces;
 
 import common.Position;
-import game.ChessBoard;
 import game.ChessBoardGameInterface;
 import game.ChessBoardPieceInterface;
 
@@ -62,5 +61,11 @@ public interface PieceInterface extends LayoutEntityInterface {
      * @return Position[]
      */
     List<Position> getPossibilities(ChessBoardGameInterface chessBoardSimpleInterface);
+
+    /**
+     * Return all savior positions
+     * @return Position[]
+     */
+    List<Position> getSaviorPositions();
 
 }

@@ -6,6 +6,7 @@ import game.ChessBoardPieceInterface;
 import javafx.scene.image.ImageView;
 import view.ImageManager;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @SuppressWarnings("Duplicates")
@@ -15,12 +16,14 @@ public abstract class Piece extends LayoutEntity implements PieceInterface {
     private Position position;
     private boolean firstTime;
     private boolean savior;
+    private List<Position> saviorPositions;
 
     public Piece(TeamColor teamColor, Position position) {
         this.teamColor = teamColor;
         this.position = position;
         this.firstTime = true;
         this.savior = false;
+        this.saviorPositions = new ArrayList<>();
         ImageView imageView = new ImageView();
         if(teamColor == TeamColor.White){
             imageView.setImage(ImageManager.loadImage(this));
@@ -111,6 +114,11 @@ public abstract class Piece extends LayoutEntity implements PieceInterface {
     @Override
     public void capture(ChessBoardPieceInterface chessBoard) {
         chessBoard.removePieceView(this);
+    }
+
+    @Override
+    public List<Position> getSaviorPositions() {
+        return this.saviorPositions;
     }
 
     @Override

@@ -25,54 +25,26 @@ public class Bishop extends Piece {
 		if (!MovementRules.slashDiagonalProtection(chessBoard, this.getPosition().getX(), this.getPosition().getY(), this.getTeamColor())) {
 			for(int x = this.getPosition().getX() + 1; x < ChessBoard.boardSize && y < ChessBoard.boardSize; x++, y++) {
 				if (chessBoard.getBoardPosition(x, y) == null) {
-					if (chessBoard.getGameManagement().isCheckState()) {
-						if (MovementRules.isThisProtecting(chessBoard, x, y, this.getTeamColor())) {
-							positions.add(new Position(x, y));
-						}
-					}
-					else {
-						positions.add(new Position(x, y));
-					}
+					positions.add(new Position(x, y));
 				}
 				else if (chessBoard.getBoardPosition(x, y) == this.getTeamColor()) {
 					break;
 				}
 				else {
-					if (chessBoard.getGameManagement().isCheckState()) {
-						if (MovementRules.isThisProtecting(chessBoard, x, y, this.getTeamColor())) {
-							positions.add(new Position(x, y));
-						}
-					}
-					else {
-						positions.add(new Position(x, y));
-					}
+					positions.add(new Position(x, y));
 					break;
 				}
 			}
 			y = this.getPosition().getY() - 1;
 			for(int x = this.getPosition().getX() - 1; x >= 0 && y >= 0; x--, y--) {
 				if (chessBoard.getBoardPosition(x, y) == null) {
-					if (chessBoard.getGameManagement().isCheckState()) {
-						if (MovementRules.isThisProtecting(chessBoard, x, y, this.getTeamColor())) {
-							positions.add(new Position(x, y));
-						}
-					}
-					else {
-						positions.add(new Position(x, y));
-					}
+					positions.add(new Position(x, y));
 				}
 				else if (chessBoard.getBoardPosition(x, y) == this.getTeamColor()) {
 					break;
 				}
 				else {
-					if (chessBoard.getGameManagement().isCheckState()) {
-						if (MovementRules.isThisProtecting(chessBoard, x, y, this.getTeamColor())) {
-							positions.add(new Position(x, y));
-						}
-					}
-					else {
-						positions.add(new Position(x, y));
-					}
+					positions.add(new Position(x, y));
 					break;
 				}
 			}
@@ -81,54 +53,26 @@ public class Bishop extends Piece {
 			y = this.getPosition().getY() + 1;
 			for (int x = this.getPosition().getX() - 1; x >= 0 && y < ChessBoard.boardSize; x--, y++) {
 				if (chessBoard.getBoardPosition(x, y) == null) {
-					if (chessBoard.getGameManagement().isCheckState()) {
-						if (MovementRules.isThisProtecting(chessBoard, x, y, this.getTeamColor())) {
-							positions.add(new Position(x, y));
-						}
-					}
-					else {
-						positions.add(new Position(x, y));
-					}
+					positions.add(new Position(x, y));
 				}
 				else if (chessBoard.getBoardPosition(x, y) == this.getTeamColor()) {
 					break;
 				}
 				else {
-					if (chessBoard.getGameManagement().isCheckState()) {
-						if (MovementRules.isThisProtecting(chessBoard, x, y, this.getTeamColor())) {
-							positions.add(new Position(x, y));
-						}
-					}
-					else {
-						positions.add(new Position(x, y));
-					}
+					positions.add(new Position(x, y));
 					break;
 				}
 			}
 			y = this.getPosition().getY() - 1;
 			for (int x = this.getPosition().getX() + 1; x < ChessBoard.boardSize && y >= 0; x++, y--) {
 				if (chessBoard.getBoardPosition(x, y) == null) {
-					if (chessBoard.getGameManagement().isCheckState()) {
-						if (MovementRules.isThisProtecting(chessBoard, x, y, this.getTeamColor())) {
-							positions.add(new Position(x, y));
-						}
-					}
-					else {
-						positions.add(new Position(x, y));
-					}
+					positions.add(new Position(x, y));
 				}
 				else if (chessBoard.getBoardPosition(x, y) == this.getTeamColor()) {
 					break;
 				}
 				else {
-					if (chessBoard.getGameManagement().isCheckState()) {
-						if (MovementRules.isThisProtecting(chessBoard, x, y, this.getTeamColor())) {
-							positions.add(new Position(x, y));
-						}
-					}
-					else {
-						positions.add(new Position(x, y));
-					}
+					positions.add(new Position(x, y));
 					break;
 				}
 			}

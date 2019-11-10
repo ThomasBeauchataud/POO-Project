@@ -124,23 +124,23 @@ public class ChessBoard extends Pane implements ChessBoardGameInterface, ChessBo
 	public void selectPiece(final double x, final double y){
 		int indexX = (int) (x/ cell_width);
 		int indexY = (int) (y/ cell_height);
-		if (!gameManagement.isCheckmate() && !gameManagement.isStalemate() && !timer.isTimeOver()) {
-			if (windows[indexX][indexY].isHighlighted()) {
-				movePiece(x, y);
+		//If the player already have selected a piece
+		if (windows[indexX][indexY].isHighlighted()) {
+			movePiece(x, y);
+			unhighlightWindow();
+			gameManagement.setSelectedPiece(null);
+		}
+		else {
+			//If the player has a selected one of his pieces
+			if(pieces[indexX][indexY] != null && pieces[indexX][indexY].getTeamColor() == gameManagement.getCurrentPlayer()){
 				unhighlightWindow();
-				gameManagement.setSelectedPiece(null);
-			}
-			else {
-				if(pieces[indexX][indexY] != null && pieces[indexX][indexY].getTeamColor() == gameManagement.getCurrentPlayer()){
-					unhighlightWindow();
-					PieceInterface piece = pieces[indexX][indexY];
-					this.colorSquare(piece.getPosition().getX(), piece.getPosition().getY(), true);
-					List<Position> positions = piece.getPossibilities(this);
-					for(Position position : positions) {
-						this.colorSquare(position.getX(), position.getY(), false);
-					}
-					gameManagement.setSelectedPiece(pieces[indexX][indexY]);
+				PieceInterface piece = pieces[indexX][indexY];
+				this.colorSquare(piece.getPosition().getX(), piece.getPosition().getY(), true);
+				List<Position> positions = piece.getPossibilities(this);
+				for(Position position : positions) {
+					this.colorSquare(position.getX(), position.getY(), false);
 				}
+				gameManagement.setSelectedPiece(pieces[indexX][indexY]);
 			}
 		}
 	}

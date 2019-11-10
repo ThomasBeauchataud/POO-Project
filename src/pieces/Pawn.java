@@ -23,49 +23,21 @@ public class Pawn extends Piece {
 		if (this.getTeamColor() == TeamColor.White) {
 			if (!MovementRules.slashDiagonalProtection(chessBoard, this.getPosition(), this.getTeamColor()) && !MovementRules.backslashDiagonalProtection(chessBoard, this.getPosition(), this.getTeamColor())) {
 				if (this.getPosition().getY() - 1 >= 0 && chessBoard.getBoardPosition(this.getPosition().getX(), this.getPosition().getY() - 1) == null) {
-					if (chessBoard.getGameManagement().isCheckState()) {
-						if (MovementRules.isThisProtecting(chessBoard, this.getPosition().getX(), this.getPosition().getY() - 1, this.getTeamColor())) {
-							positions.add(new Position(this.getPosition().getX(), this.getPosition().getY() - 1));
-						}
-					}
-					else {
-						positions.add(new Position(this.getPosition().getX(), this.getPosition().getY() - 1));
-					}
+					positions.add(new Position(this.getPosition().getX(), this.getPosition().getY() - 1));
 				}
 				if (this.isFirstTime() && chessBoard.getBoardPosition(this.getPosition().getX(), this.getPosition().getY() - 2) == null) {
-					if (chessBoard.getGameManagement().isCheckState()) {
-						if (MovementRules.isThisProtecting(chessBoard, this.getPosition().getX(), this.getPosition().getY() - 2, this.getTeamColor())) {
-							positions.add(new Position(this.getPosition().getX(), this.getPosition().getY() - 2));
-						}
-					}
-					else {
-						positions.add(new Position(this.getPosition().getX(), this.getPosition().getY() - 2));
-					}
+					positions.add(new Position(this.getPosition().getX(), this.getPosition().getY() - 2));
 				}
 			}
 			if (!MovementRules.verticalProtection(chessBoard, this.getPosition(), this.getTeamColor())) {
 				if (!MovementRules.slashDiagonalProtection(chessBoard, this.getPosition(), this.getTeamColor())) {
 					if (this.getPosition().getY() - 1 >= 0 && this.getPosition().getX() - 1 >= 0 && chessBoard.getBoardPosition(this.getPosition().getX() - 1, this.getPosition().getY() - 1) != this.getTeamColor() && chessBoard.getBoardPosition(this.getPosition().getX() - 1, this.getPosition().getY() - 1) != null) {
-						if (chessBoard.getGameManagement().isCheckState()) {
-							if (MovementRules.isThisProtecting(chessBoard, this.getPosition().getX() - 1, this.getPosition().getY() - 1, this.getTeamColor())) {
-								positions.add(new Position(this.getPosition().getX() - 1, this.getPosition().getY() - 1));
-							}
-						}
-						else {
-							positions.add(new Position(this.getPosition().getX() - 1, this.getPosition().getY() - 1));
-						}
+						positions.add(new Position(this.getPosition().getX() - 1, this.getPosition().getY() - 1));
 					}
 				}
 				if (!MovementRules.backslashDiagonalProtection(chessBoard, this.getPosition(), this.getTeamColor())) {
 					if (this.getPosition().getY() - 1 >= 0 && this.getPosition().getX() + 1 < ChessBoard.boardSize && chessBoard.getBoardPosition(this.getPosition().getX() + 1, this.getPosition().getY() - 1) != this.getTeamColor() && chessBoard.getBoardPosition(this.getPosition().getX() + 1, this.getPosition().getY() - 1) != null) {
-						if (chessBoard.getGameManagement().isCheckState()) {
-							if (MovementRules.isThisProtecting(chessBoard, this.getPosition().getX() + 1, this.getPosition().getY() - 1, this.getTeamColor())) {
-								positions.add(new Position(this.getPosition().getX() + 1, this.getPosition().getY() - 1));
-							}
-						}
-						else {
-							positions.add(new Position(this.getPosition().getX() + 1, this.getPosition().getY() - 1));
-						}
+						positions.add(new Position(this.getPosition().getX() + 1, this.getPosition().getY() - 1));
 					}
 				}
 			}
@@ -73,53 +45,26 @@ public class Pawn extends Piece {
 		else if (this.getTeamColor() == TeamColor.Black) {
 			if (!MovementRules.slashDiagonalProtection(chessBoard, this.getPosition(), this.getTeamColor()) && !MovementRules.backslashDiagonalProtection(chessBoard, this.getPosition(), this.getTeamColor())) {
 				if (this.getPosition().getY() + 1 < ChessBoard.boardSize && chessBoard.getBoardPosition(this.getPosition().getX(), this.getPosition().getY() + 1) == null) {
-					if (chessBoard.getGameManagement().isCheckState()) {
-						if (MovementRules.isThisProtecting(chessBoard, this.getPosition().getX(), this.getPosition().getY() + 1, this.getTeamColor())) {
-							positions.add(new Position(this.getPosition().getX(), this.getPosition().getY() + 1));
-						}
-					}
-					else {
-						positions.add(new Position(this.getPosition().getX(), this.getPosition().getY() + 1));
-					}
+					positions.add(new Position(this.getPosition().getX(), this.getPosition().getY() + 1));
 				}
 				if (this.isFirstTime() && chessBoard.getBoardPosition(this.getPosition().getX(), this.getPosition().getY() + 2) == null) {
-					if (chessBoard.getGameManagement().isCheckState()) {
-						if (MovementRules.isThisProtecting(chessBoard, this.getPosition().getX(), this.getPosition().getY() + 2, this.getTeamColor())) {
-							positions.add(new Position(this.getPosition().getX(), this.getPosition().getY() + 2));
-						}
-					}
-					else {
-						positions.add(new Position(this.getPosition().getX(), this.getPosition().getY() + 2));
-					}
+					positions.add(new Position(this.getPosition().getX(), this.getPosition().getY() + 2));
 				}
 			}
 			if (!MovementRules.verticalProtection(chessBoard, this.getPosition(), this.getTeamColor())) {
 				if (!MovementRules.backslashDiagonalProtection(chessBoard, this.getPosition(), this.getTeamColor())) {
 					if (this.getPosition().getY() + 1 < ChessBoard.boardSize && this.getPosition().getX() - 1 >= 0 && chessBoard.getBoardPosition(this.getPosition().getX() - 1, this.getPosition().getY() + 1) != this.getTeamColor() && chessBoard.getBoardPosition(this.getPosition().getX() - 1, this.getPosition().getY() + 1) != null) {
-						if (chessBoard.getGameManagement().isCheckState()) {
-							if (MovementRules.isThisProtecting(chessBoard, this.getPosition().getX() - 1, this.getPosition().getY() + 1, this.getTeamColor())) {
-								positions.add(new Position(this.getPosition().getX() - 1, this.getPosition().getY() + 1));
-							}
-						}
-						else {
-							positions.add(new Position(this.getPosition().getX() - 1, this.getPosition().getY() + 1));
-						}
+						positions.add(new Position(this.getPosition().getX() - 1, this.getPosition().getY() + 1));
 					}
 				}
 				if (!MovementRules.slashDiagonalProtection(chessBoard, this.getPosition(), this.getTeamColor())) {
 					if (this.getPosition().getY() + 1 < ChessBoard.boardSize && this.getPosition().getX() + 1 < ChessBoard.boardSize && chessBoard.getBoardPosition(this.getPosition().getX() + 1, this.getPosition().getY() + 1) != this.getTeamColor() && chessBoard.getBoardPosition(this.getPosition().getX() + 1, this.getPosition().getY() + 1) != null) {
-						if (chessBoard.getGameManagement().isCheckState()) {
-							if (MovementRules.isThisProtecting(chessBoard, this.getPosition().getX() + 1, this.getPosition().getY() + 1, this.getTeamColor())) {
-								positions.add(new Position(this.getPosition().getX() + 1, this.getPosition().getY() + 1));
-							}
-						}
-						else {
-							positions.add(new Position(this.getPosition().getX() + 1, this.getPosition().getY() + 1));
-						}
+						positions.add(new Position(this.getPosition().getX() + 1, this.getPosition().getY() + 1));
 					}
 				}
 			}
 		}
 		return positions;
 	}
+
 }
