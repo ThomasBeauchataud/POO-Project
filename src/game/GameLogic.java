@@ -463,7 +463,6 @@ public class GameLogic {
 
     /**
      * Return all Pieces that can save for a check situation by placing them between the king and the check piece
-     * TODO Add the possibility that the king eat a check piece
      * @param chessBoard ChessBoardGameInterface
      * @param xPos int, the x coordinate of the piece creating a check situation
      * @param yPos int, the y coordinate of the piece creating a check situation
