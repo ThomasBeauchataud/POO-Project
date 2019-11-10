@@ -1,4 +1,6 @@
 # POO-Project
+Optimised Object Oriented Programming chess game
+
 ### About
 Authors:
 - Thomas Beauchataud
