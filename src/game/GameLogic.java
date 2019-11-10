@@ -381,6 +381,7 @@ public class GameLogic {
             PieceInterface checkPiece = chessBoard.getGameManagement().getCheckPieces().get(0);
             canCapture(chessBoard, checkPiece);
             canProtect(chessBoard, position, checkPiece);
+            canDodge(chessBoard, checkPiece.getTeamColor());
             if (!chessBoard.getGameManagement().getSaviorPieces().isEmpty()) {
                 for(Iterator<PieceInterface> piece = chessBoard.getGameManagement().getSaviorPieces().iterator(); piece.hasNext(); ) {
                     PieceInterface item = piece.next();
@@ -396,6 +397,24 @@ public class GameLogic {
             }
         }
         return checkmate;
+    }
+
+    /**
+     * Find if the king can dodge the check piece
+     * @param chessBoard ChessBoardGameInterface
+     * @param enemyPlayer eamColor
+     */
+    private void canDodge(ChessBoardGameInterface chessBoard, TeamColor enemyPlayer) {
+        TeamColor player = getEnemyTeamColor(enemyPlayer);
+        Position playerKingPosition = chessBoard.getKing(player).getPosition();
+        for(int x = playerKingPosition.getX() - 1 ; x <= playerKingPosition.getX() + 1 ; x++) {
+            for(int y = playerKingPosition.getY() - 1 ; y <= playerKingPosition.getY() + 1 ; y++) {
+                if(x>0 && x<8 && y>0 && y<8 && (x != playerKingPosition.getX() || y!=playerKingPosition.getY()) && !MovementRules.isCheck(chessBoard, x, y, player) && chessBoard.getBoardPosition(x, y) == null) {
+                    chessBoard.getGameManagement().getSaviorPieces().add(chessBoard.getKing(player));
+                    chessBoard.getKing(player).getSaviorPositions().add(new Position(x, y));
+                }
+            }
+        }
     }
 
     /**
@@ -473,9 +492,10 @@ public class GameLogic {
     private List<PieceInterface> findAllSaviorPieces(ChessBoardGameInterface chessBoard, int xPos, int yPos, TeamColor enemyPlayer, boolean protect) {
         List<PieceInterface> saviorPieces =  new ArrayList<>();
         TeamColor player = getEnemyTeamColor(enemyPlayer);
+        Position playerKingPosition = chessBoard.getKing(player).getPosition();
         //If the King can capture the check piece and is not is an other check situation
-        if(Math.abs(chessBoard.getKing(player).getPosition().getX() - xPos) <= 1
-                && Math.abs(chessBoard.getKing(player).getPosition().getY() - yPos) <= 1
+        if(Math.abs(playerKingPosition.getX() - xPos) <= 1
+                && Math.abs(playerKingPosition.getY() - yPos) <= 1
                 && !MovementRules.isCheck(chessBoard, xPos, yPos, player)) {
             saviorPieces.add(chessBoard.getKing(player));
         }
