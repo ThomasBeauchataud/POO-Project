@@ -6,58 +6,47 @@ import javafx.animation.Timeline;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonType;
-import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
 import view.StatusBar;
 import view.StatusBarInterface;
 import view.Window;
-import view.WindowInterface;
 
 import java.util.List;
 import java.util.Optional;
 
 @SuppressWarnings({"WeakerAccess", "OptionalGetWithoutIsPresent"})
-public class ChessBoard extends Pane implements ChessBoardGameInterface, ChessBoardViewInterface {
+public class ChessBoard extends ChessBoardView {
 
 	public static int boardSize = 8;
 
 	private GameManagementInterface gameManagement = new GameManagement();
 	private PieceInterface[][] pieces;
-	private WindowInterface[][] windows;
 	private StatusBarInterface statusBar;
-	private Rectangle background;
-	private double cell_width;
-	private double cell_height;
 	private TimerInterface timer;
 
 	public ChessBoard(StatusBar newStatusBar) {
+		super();
 		statusBar = newStatusBar;
 		statusBar.reset();
-		background = new Rectangle();
-		background.setFill(Color.WHITE);
-		getChildren().add(background);
 		pieces = new Piece[boardSize][boardSize];
-		windows = new Window[boardSize][boardSize];
 		for (int i = 0; i < 8; i++) {
 			boolean isBlack;
 			isBlack = i % 2 != 0;
 			for (int j = 0; j < 8; j++) {
 				if(isBlack) {
-					windows[i][j] = new Window(0);
+					setWindow(i,j, new Window(0));
 					isBlack = false;
 				} else {
-					windows[i][j] = new Window(1);
+					setWindow(i,j, new Window(1));
 					isBlack = true; 
 				}
-				getChildren().add((Window)windows[i][j]);
+				getChildren().add((Window)getWindow(i,j));
 				pieces[i][j] = null;
 			}
 		}
 		gameManagement.setCurrentPlayer(TeamColor.White);
 		initPiece();
 		timer = new Timer(gameManagement, statusBar);
-
 		timer.getTimeline().setCycleCount(Timeline.INDEFINITE);
 		timer.getTimeline().play();
 	}
@@ -88,24 +77,7 @@ public class ChessBoard extends Pane implements ChessBoardGameInterface, ChessBo
 		return null;
 	}
 
-	@Override
-	public void resize(double width, double height) {
-		super.resize(width, height);
-		background.setWidth(width);
-		background.setHeight(height);
-		cell_width = width / 8.0;
-		cell_height = height / 8.0;
-		for (int i = 0; i < 8; i++) {
-			for (int j = 0; j < 8; j++) {
-				if (pieces[i][j] != null) {
-					pieces[i][j].relocate(i * cell_width, j * cell_height);
-					pieces[i][j].resize(cell_width, cell_height);
-				}
-				windows[i][j].relocate(i * cell_width, j * cell_height);
-				windows[i][j].resize(cell_width, cell_height);
-			}
-		}
-	}
+
 
 	@Override
 	public void resetGame() {
@@ -122,10 +94,10 @@ public class ChessBoard extends Pane implements ChessBoardGameInterface, ChessBo
 	
 	@Override
 	public void selectPiece(final double x, final double y){
-		int indexX = (int) (x/ cell_width);
-		int indexY = (int) (y/ cell_height);
+		int indexX = (int) (x/ getCellWidth());
+		int indexY = (int) (y/ getCellHeight());
 		//If the player already have selected a piece
-		if (windows[indexX][indexY].isHighlighted()) {
+		if (getWindow(indexX,indexY).isHighlighted()) {
 			movePiece(x, y);
 			unhighlightWindow();
 			gameManagement.setSelectedPiece(null);
@@ -192,9 +164,9 @@ public class ChessBoard extends Pane implements ChessBoardGameInterface, ChessBo
 	@Override
 	public void colorSquare(int x, int y, boolean selectedPiece) {
 		if (selectedPiece)
-			windows[x][y].highlightWindow(Color.ORANGE);
+			getWindow(x,y).highlightWindow(Color.ORANGE);
 		else
-			windows[x][y].highlightWindow(Color.GREEN);
+			getWindow(x,y).highlightWindow(Color.GREEN);
 	}
 
 	@Override
@@ -216,16 +188,16 @@ public class ChessBoard extends Pane implements ChessBoardGameInterface, ChessBo
 	}
 
 	private void movePiece(final double x, final double y){
-		int indexX = (int) (x/ cell_width);
-		int indexY = (int) (y/ cell_height);
+		int indexX = (int) (x/ getCellWidth());
+		int indexY = (int) (y/ getCellHeight());
 		gameManagement.getSelectedPiece().move(this, indexX, indexY);
 	}
 
     private void unhighlightWindow() {
         for (int y = 0; y < boardSize; y++) {
             for (int x = 0; x < boardSize; x++) {
-                if (windows[x][y].getRectangle().getStroke() != null) {
-                    windows[x][y].unhighlight();
+                if (getWindow(x,y).getRectangle().getStroke() != null) {
+                    getWindow(x,y).unhighlight();
                 }
             }
         }
