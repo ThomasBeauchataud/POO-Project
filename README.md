@@ -12,7 +12,7 @@ Production date: 10.11.2019
 
 ### Description
 
-> All images are available is the _resources_ folder
+> All images are available is the _docs_ folder
 
 #### Class Diagram
 ![](https://github.com/ffcfalcos/POO-Project/blob/master/resources/Class%20Diagram.png)
@@ -20,5 +20,5 @@ Production date: 10.11.2019
 #### UML Diagram
 ![](https://github.com/ffcfalcos/POO-Project/blob/master/resources/UML%20Diagram.png)
 
-#### Full UML Diagram
-![](https://github.com/ffcfalcos/POO-Project/blob/master/resources/Full%20UML%20Diagram.png)
+#### Relation Diagram
+![](https://github.com/ffcfalcos/POO-Project/blob/master/resources/Relation%20Diagram.png)
