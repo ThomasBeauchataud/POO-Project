@@ -1,5 +1,7 @@
 package game;
 
+import pieces.PieceInterface;
+
 /**
  * Manage the ChessBoard View
  */
@@ -29,5 +31,14 @@ public interface ChessBoardViewInterface {
      * @param y double
      */
     void selectPiece(double x, double y);
+
+    /**
+     * Return a Piece from coordinates
+     * Return null if there is no Piece
+     * @param x int
+     * @param y int
+     * @return PieceInterface
+     */
+    PieceInterface getPiece(int x, int y);
 
 }

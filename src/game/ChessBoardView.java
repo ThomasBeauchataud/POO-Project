@@ -9,7 +9,7 @@ import view.WindowInterface;
 import static game.ChessBoard.boardSize;
 
 @SuppressWarnings("WeakerAccess")
-public abstract class ChessBoardView extends Pane implements ChessBoardGameInterface, ChessBoardViewInterface {
+public abstract class ChessBoardView extends Pane implements ChessBoardViewInterface {
 
     private double cellWidth;
     private double cellHeight;

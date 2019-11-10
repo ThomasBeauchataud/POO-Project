@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.Optional;
 
 @SuppressWarnings({"WeakerAccess", "OptionalGetWithoutIsPresent"})
-public class ChessBoard extends ChessBoardView {
+public class ChessBoard extends ChessBoardView implements ChessBoardGameInterface {
 
 	public static int boardSize = 8;
 
