@@ -1,5 +1,6 @@
-package game;
+package view;
 
+import game.TimerInterface;
 import pieces.PieceInterface;
 
 /**
@@ -40,5 +41,17 @@ public interface ChessBoardViewInterface {
      * @return PieceInterface
      */
     PieceInterface getPiece(int x, int y);
+
+    /**
+     * Return the StatusBar
+     * @return StatusBarInterface
+     */
+    StatusBarInterface getStatusBar();
+
+    /**
+     * Return the Timer
+     * @return TimerInterface
+     */
+    TimerInterface getTimer();
 
 }

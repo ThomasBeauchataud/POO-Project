@@ -46,4 +46,10 @@ public interface ChessBoardGameInterface extends ChessBoardPieceInterface {
      */
     StatusBarInterface getStatusBar();
 
+    /**
+     * Return the Timer
+     * @return TimerInterface
+     */
+    TimerInterface getTimer();
+
 }

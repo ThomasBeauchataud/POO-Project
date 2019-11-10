@@ -1,7 +1,6 @@
 package view;
 
 import game.ChessBoard;
-import game.ChessBoardViewInterface;
 import javafx.scene.control.Control;
 import javafx.scene.input.KeyCode;
 

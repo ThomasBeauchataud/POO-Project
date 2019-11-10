@@ -25,7 +25,7 @@ public class GameLogic {
      */
     @Around("execution(public void game.ChessBoard.selectPiece(double, double))")
     public Object beforeSelectPiece(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
-        ChessBoard chessBoard = (ChessBoard) proceedingJoinPoint.getTarget();
+        ChessBoardGameInterface chessBoard = (ChessBoardGameInterface) proceedingJoinPoint.getTarget();
         if (chessBoard.getGameManagement().isCheckmate() || chessBoard.getGameManagement().isStalemate() || chessBoard.getTimer().isTimeOver()) {
             return null;
         }
@@ -53,7 +53,7 @@ public class GameLogic {
      */
     @After("execution(public void game.ChessBoard.resetGame())")
     public void afterResetGame(JoinPoint joinPoint) {
-        ChessBoard chessBoard = (ChessBoard) joinPoint.getTarget();
+        ChessBoardGameInterface chessBoard = (ChessBoardGameInterface) joinPoint.getTarget();
         chessBoard.getGameManagement().resetGame();
         chessBoard.getStatusBar().reset();
         chessBoard.getTimer().reset();
@@ -70,7 +70,7 @@ public class GameLogic {
      */
     @Around("execution(public java.util.List<common.Position> pieces.Piece.getPossibilities(game.ChessBoardGameInterface))")
     public Object canMove(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
-        ChessBoard chessBoard = (ChessBoard) proceedingJoinPoint.getArgs()[0];
+        ChessBoardGameInterface chessBoard = (ChessBoardGameInterface) proceedingJoinPoint.getArgs()[0];
         PieceInterface piece = (Piece) proceedingJoinPoint.getTarget();
         if(chessBoard.getGameManagement().isCheckState()) {
             if (piece.isSavior()) {
@@ -87,7 +87,7 @@ public class GameLogic {
      */
     @After("execution(private void game.ChessBoard.movePiece(double, double))")
     public void afterPieceMovement(JoinPoint joinPoint) {
-        ChessBoard chessBoard = (ChessBoard) joinPoint.getTarget();
+        ChessBoardGameInterface chessBoard = (ChessBoardGameInterface) joinPoint.getTarget();
         //Change the player
         TeamColor player = getEnemyTeamColor(chessBoard.getGameManagement().getCurrentPlayer());
         chessBoard.getGameManagement().setCurrentPlayer(player);
@@ -128,7 +128,7 @@ public class GameLogic {
      * @param teamColor TeamColor
      * @return boolean
      */
-    private boolean isStalemate(ChessBoardGameInterface chessBoard, Piece king, TeamColor teamColor) {
+    private boolean isStalemate(ChessBoardGameInterface chessBoard, PieceInterface king, TeamColor teamColor) {
         if (isOneKingStalemate(chessBoard, king, teamColor) || isLimitPieceStalemate(chessBoard)) {
             chessBoard.getGameManagement().setStalemate(false);
             return true;
@@ -143,7 +143,7 @@ public class GameLogic {
      * @param teamColor TeamColor
      * @return boolean
      */
-    private boolean isOneKingStalemate(ChessBoardGameInterface chessBoard, Piece king, TeamColor teamColor) {
+    private boolean isOneKingStalemate(ChessBoardGameInterface chessBoard, PieceInterface king, TeamColor teamColor) {
         int nbPiece = 0;
         boolean stalemate = true;
         //Count the number of resting pieces

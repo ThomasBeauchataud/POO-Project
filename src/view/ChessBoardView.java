@@ -1,22 +1,25 @@
-package game;
+package view;
 
+import game.TimerInterface;
+import javafx.animation.Timeline;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
-import view.Window;
-import view.WindowInterface;
 
 import static game.ChessBoard.boardSize;
 
-@SuppressWarnings("WeakerAccess")
 public abstract class ChessBoardView extends Pane implements ChessBoardViewInterface {
 
     private double cellWidth;
     private double cellHeight;
     private Rectangle background;
     private WindowInterface[][] windows;
+    private StatusBarInterface statusBar;
+    private TimerInterface timer;
 
-    public ChessBoardView() {
+    public ChessBoardView(StatusBarInterface statusBar) {
+        this.statusBar = statusBar;
+        this.statusBar.reset();
         windows = new Window[boardSize][boardSize];
         background = new Rectangle();
         background.setFill(Color.WHITE);
@@ -37,6 +40,22 @@ public abstract class ChessBoardView extends Pane implements ChessBoardViewInter
 
     protected void setWindow(int i, int j, WindowInterface window) {
         windows[i][j] = window;
+    }
+
+    protected void setTimer(TimerInterface timer) {
+        this.timer = timer;
+        this.timer.getTimeline().setCycleCount(Timeline.INDEFINITE);
+        this.timer.getTimeline().play();
+    }
+
+    @Override
+    public StatusBarInterface getStatusBar() {
+        return (statusBar);
+    }
+
+    @Override
+    public TimerInterface getTimer() {
+        return timer;
     }
 
     @Override

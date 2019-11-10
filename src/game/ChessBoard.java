@@ -2,32 +2,28 @@ package game;
 
 import common.Position;
 import pieces.*;
-import javafx.animation.Timeline;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonType;
 import javafx.scene.paint.Color;
+import view.ChessBoardView;
 import view.StatusBar;
-import view.StatusBarInterface;
 import view.Window;
 
 import java.util.List;
 import java.util.Optional;
 
-@SuppressWarnings({"WeakerAccess", "OptionalGetWithoutIsPresent"})
+@SuppressWarnings("OptionalGetWithoutIsPresent")
 public class ChessBoard extends ChessBoardView implements ChessBoardGameInterface {
 
 	public static int boardSize = 8;
 
 	private GameManagementInterface gameManagement = new GameManagement();
 	private PieceInterface[][] pieces;
-	private StatusBarInterface statusBar;
-	private TimerInterface timer;
 
-	public ChessBoard(StatusBar newStatusBar) {
-		super();
-		statusBar = newStatusBar;
-		statusBar.reset();
+	public ChessBoard(StatusBar statusBar) {
+		super(statusBar);
+		super.setTimer(new Timer(gameManagement, statusBar));
 		pieces = new Piece[boardSize][boardSize];
 		for (int i = 0; i < 8; i++) {
 			boolean isBlack;
@@ -46,23 +42,11 @@ public class ChessBoard extends ChessBoardView implements ChessBoardGameInterfac
 		}
 		gameManagement.setCurrentPlayer(TeamColor.White);
 		initPiece();
-		timer = new Timer(gameManagement, statusBar);
-		timer.getTimeline().setCycleCount(Timeline.INDEFINITE);
-		timer.getTimeline().play();
 	}
 
 	@Override
 	public GameManagementInterface getGameManagement() {
 		return gameManagement;
-	}
-
-	@Override
-	public StatusBarInterface getStatusBar() {
-		return (statusBar);
-	}
-
-	public TimerInterface getTimer() {
-		return timer;
 	}
 
 	@Override
@@ -76,8 +60,6 @@ public class ChessBoard extends ChessBoardView implements ChessBoardGameInterfac
 		}
 		return null;
 	}
-
-
 
 	@Override
 	public void resetGame() {
